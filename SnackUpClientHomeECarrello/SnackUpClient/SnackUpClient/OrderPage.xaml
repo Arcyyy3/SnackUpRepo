@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
+             xmlns:stepProgressBar="clr-namespace:Syncfusion.Maui.ProgressBar;assembly=Syncfusion.Maui.ProgressBar"
+             x:Class="SnackUpClient.OrderPage"
+            
+             Title="OrderPage"
+             BackgroundColor="#FAFAFA">
+ 
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
+            <StackLayout Orientation="Vertical">
+                <StackLayout Orientation="Horizontal" Padding="30,30,20,22" Background="Transparent">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackButtonClicked" />
+                    </StackLayout.GestureRecognizers>
+                    <Image Source="arrow_left.png" HeightRequest="20"
+                           WidthRequest="20" BackgroundColor="Transparent"
+                           HorizontalOptions="Start" VerticalOptions="Start"/>
+                </StackLayout>
+                <Label Text="Dettagli ordine" Padding="0" Grid.Row="1" Margin="30,0,0,0" FontSize="30" FontFamily="Roboto-Black"></Label>
+                <StackLayout Padding="30,20,30,0">
+                    <Label Text="{Binding DataConsegna}" FontSize="23" TextColor="#FF7B21" FontFamily="Roboto-Bold" Margin="0,0,0,2" />
+                    <Label Text="{Binding Orario}" FontSize="18" TextColor="#171717" FontFamily="Roboto-Bold" Margin="0,0,0,20"/>
+                    
+                    <CollectionView ItemsSource="{Binding ListaOrdini}" 
+                        VerticalOptions="FillAndExpand">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Margin="0,0,0,15">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Immagine del prodotto -->
+                                        <Frame Padding="0"
+                                   Margin="0"
+                                   BorderColor="Transparent"
+                                   CornerRadius="22"
+                                   HeightRequest="90"
+                                   WidthRequest="90">
+                                            <Image
+                                   Source="{Binding Immagine}"
+                                   Aspect="AspectFill"
+                                   HeightRequest="90"
+                                   WidthRequest="90"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                                        </Frame>
+
+                                        <!-- Testo e prezzo al centro -->
+                                        <Grid Grid.Column="1" Padding="10,0,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <!-- Per il primo Label -->
+                                                <RowDefinition Height="*" />
+                                                <!-- Spazio vuoto -->
+                                                <RowDefinition Height="Auto" />
+                                                <!-- Per il secondo Label -->
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Nome del prodotto -->
+                                            <Label Text="{Binding Nome}"
+                                                       Grid.Row="0"
+                                                       VerticalOptions="Start"
+                                                       FontFamily="Roboto-Bold"
+                                                       FontSize="16" />
+                                            <Label Text="{Binding Quantita, StringFormat='Quantità: {0}'}"
+                                                       Grid.Row="1"
+                                                       VerticalOptions="Start"
+                                                           FontFamily="Roboto"
+                                                            FontSize="14"/>
+                                            <!-- Prezzo -->
+                                            <Label 
+                                                   Text="{Binding Prezzo, StringFormat='{0:C}'}" 
+                                                   Grid.Row="2"
+                                                   VerticalOptions="End"
+                                                   FontSize="18"
+                                                   FontFamily="Roboto-Black"
+                                                   TextColor="#FF7B21" />
+                                        </Grid>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <!-- ooooooooooooooooooo SEPARAZIONE ooooooooooooooooooooo-->
+                    <BoxView HeightRequest="1" BackgroundColor="LightGray" />
+                    <StackLayout Orientation="Vertical" Padding="0,15,0,15" Spacing="10">
+                        <!-- Ordinato il -->
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                            <Label Text="Ordinato il:" 
+               FontSize="16" 
+               FontFamily="Roboto-Bold" 
+               TextColor="#000000"
+               VerticalOptions="Center" 
+               HorizontalOptions="Start" />
+                            <Label Text="{Binding DataPagamento}" 
+               FontSize="14" 
+               FontFamily="Roboto" 
+               TextColor="#000000"
+               VerticalOptions="End" 
+               HorizontalOptions="End"
+               Grid.Column="1" />
+                        </Grid>
+
+                        <!-- Totale -->
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                            <Label Text="Totale:" 
+               FontSize="16" 
+               FontFamily="Roboto-Bold" 
+               TextColor="#000000"
+               VerticalOptions="Center" 
+               HorizontalOptions="Start" />
+                            <Label Text="{Binding Totale, StringFormat='{0:C}'}" 
+               FontSize="16" 
+               FontFamily="Roboto-Bold" 
+               TextColor="#000000"
+               VerticalOptions="Center" 
+               HorizontalOptions="End"
+               Grid.Column="1" />
+                        </Grid>
+                        
+                    </StackLayout>
+                    <!-- ooooooooooooooooooo SEPARAZIONE ooooooooooooooooooooo-->
+                    <BoxView HeightRequest="1" BackgroundColor="LightGray"/>
+                    <Label Text="Il mio ordine" FontSize="24" TextColor="#171717" FontFamily="Roboto-Bold" Margin="0,20,0,5" />
+                    <sf:SfTabView Grid.Row="3" EnableSwiping="False" IndicatorWidthMode="Fit" TabHeaderPadding="-15,0,0,0"
+                  IndicatorStrokeThickness="2" IndicatorCornerRadius ="50"  TabWidthMode="SizeToContent"
+                  IndicatorBackground="#FF7B21" Background="Transparent" HeaderDisplayMode="Default">
+                        <sf:SfTabItem Header="Come procede"
+                        TextColor="#171717" FontSize="16" FontFamily="Roboto-Bold">
+                            <StackLayout Margin="0,30,0,10">
+                                <stepProgressBar:SfStepProgressBar
+                                        x:Name="stepProgress"
+                                    Background="Transparent"
+                                        Margin="-15,0,0,0"
+                                        VerticalOptions="Center"
+                                        ProgressAnimationDuration="2500"
+                                        HorizontalOptions="FillAndExpand"                                      
+                                        Orientation="Vertical"                                                                                    
+                                        LabelSpacing="15"
+                                        ItemsSource="{Binding StepProgressItems}">
+                                    <stepProgressBar:SfStepProgressBar.InProgressStepSettings>
+                                        <stepProgressBar:StepSettings Background="#FF7B21" ContentFillColor="Transparent" ProgressColor="#FF7B21" Stroke="#FAFAFA">
+                                            <stepProgressBar:StepSettings.TextStyle>
+                                                <stepProgressBar:StepTextStyle TextColor="#171717" FontFamily="Roboto-Bold"/>
+                                            </stepProgressBar:StepSettings.TextStyle>
+                                        </stepProgressBar:StepSettings>
+                                    </stepProgressBar:SfStepProgressBar.InProgressStepSettings>
+                                    <stepProgressBar:SfStepProgressBar.CompletedStepSettings>
+                                        <stepProgressBar:StepSettings Background="#FF7B21" ContentType="Tick"  ShapeType="Circle" ProgressColor="#FF7B21" ContentFillColor="White" Stroke="Transparent">
+                                            <stepProgressBar:StepSettings.TextStyle>
+                                                <stepProgressBar:StepTextStyle TextColor="#171717" FontFamily="Roboto-Medium"/>
+                                            </stepProgressBar:StepSettings.TextStyle>
+                                        </stepProgressBar:StepSettings>
+                                    </stepProgressBar:SfStepProgressBar.CompletedStepSettings>
+                                    <stepProgressBar:SfStepProgressBar.NotStartedStepSettings>
+                                        <stepProgressBar:StepSettings Background="LightGray" ContentType="None" ShapeType="Circle" ProgressColor="Orange" ContentFillColor="White"  Stroke="Transparent">
+                                            <stepProgressBar:StepSettings.TextStyle>
+                                                <stepProgressBar:StepTextStyle TextColor="#171717" FontFamily="Roboto-Medium"/>
+                                            </stepProgressBar:StepSettings.TextStyle>
+                                        </stepProgressBar:StepSettings>
+                                    </stepProgressBar:SfStepProgressBar.NotStartedStepSettings>
+                                </stepProgressBar:SfStepProgressBar>
+                            </StackLayout>
+                        </sf:SfTabItem>
+                        
+                        <sf:SfTabItem Header="Modifica"
+                        TextColor="#171717" FontSize="16" FontFamily="Roboto-Bold">
+                            <StackLayout>
+                                <StackLayout Margin="0,20,0,0">
+                                    <Label Text="Funzione non ancora disponibile ):" HorizontalTextAlignment="Start" Margin="0,0,0,10" FontFamily="Roboto-Bold" FontSize="16"/>
+                                    <Label Text="I programmatori stanno facendo più pasticci che progressi."  FontSize="14" FontFamily="Roboto" HorizontalTextAlignment="Start"/>
+                                </StackLayout>
+                                <Frame BorderColor="Transparent" CornerRadius="200" Margin="0,10,0,30" >
+                                    <Image Source="working_on.svg" Aspect="AspectFit"/>
+                                </Frame>
+                            </StackLayout>
+                        </sf:SfTabItem>
+                        
+                        <sf:SfTabItem Header="Annulla"
+                        TextColor="#171717" FontSize="16" FontFamily="Roboto-Bold">
+                            <StackLayout Margin="0,20,0,0">
+                                <StackLayout >
+                                    <Label Text="Cosa devi sapere" FontSize="16" Margin="0,0,0,10" FontFamily="Roboto-Bold"/>
+                                    <Label Text="Puoi richiedere l'annullamento del tuo ordine cliccando sul bottone qui sotto. L'annullamento è possibile fino a un'ora prima della consegna a scuola. Oltre questo limite, non sarà più possibile annullare l'ordine."
+                                           FontSize="14"
+                                           LineHeight="1.5"
+                                           FontFamily="Roboto"
+                                           HorizontalOptions="Start"/>
+                                </StackLayout>
+                                <Button Text="Vuoi annullare il tuo ordine?"
+                                        Margin="0,30,0,0"
+                                        BorderColor="#FF7B21"
+                                        BackgroundColor="#FF7B21"
+                                        TextColor="White"
+                                        BorderWidth="1.5"
+                                        FontFamily="Roboto-Medium"
+                                        FontSize="15"
+                                        CornerRadius="35"
+                                        HeightRequest="50"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="Center"/>
+                            </StackLayout>
+                        </sf:SfTabItem>
+                    </sf:SfTabView>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+        
+        
+        
+        
+        <!-- Contenitore Fisso per il Bottone -->
+        <Border Grid.Row="1"
+        BackgroundColor="White"
+        Stroke="Transparent"
+        StrokeShape="RoundRectangle 10"
+        HeightRequest="90"
+        ZIndex="10"
+        Padding="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" 
+                Opacity="0.2" 
+                Radius="30" 
+                Offset="0,5" />
+            </Border.Shadow>
+
+                <!-- Bottone principale -->
+            <Button 
+            Text="Ordina di nuovo"
+            Margin="20"
+            BorderColor="#FF7B21"
+            BackgroundColor="#FF7B21"
+            TextColor="White"
+            BorderWidth="1.5"
+            FontFamily="Roboto-Medium"
+            FontSize="15"
+            CornerRadius="35"
+            HeightRequest="50"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="Center"
+             />
+        </Border>
+    </Grid>
+</ContentPage>

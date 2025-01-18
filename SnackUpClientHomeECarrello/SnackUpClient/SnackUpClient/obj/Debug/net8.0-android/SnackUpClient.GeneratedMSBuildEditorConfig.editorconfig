@@ -1,0 +1,161 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = true
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net8.0-android
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = SnackUpClient
+build_property.ProjectDir = C:\Users\pietr\Downloads\SnackUpClientHomeECarrello\SnackUpClient\SnackUpClient\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/App.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.App.xaml
+build_metadata.AdditionalFiles.TargetPath = App.xaml
+build_metadata.AdditionalFiles.RelativePath = App.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/AppShell.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.AppShell.xaml
+build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
+build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/CartPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.CartPage.xaml
+build_metadata.AdditionalFiles.TargetPath = CartPage.xaml
+build_metadata.AdditionalFiles.RelativePath = CartPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/ForgotPasswordPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.ForgotPasswordPage.xaml
+build_metadata.AdditionalFiles.TargetPath = ForgotPasswordPage.xaml
+build_metadata.AdditionalFiles.RelativePath = ForgotPasswordPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/HomePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.HomePage.xaml
+build_metadata.AdditionalFiles.TargetPath = HomePage.xaml
+build_metadata.AdditionalFiles.RelativePath = HomePage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/NewPasswordPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.NewPasswordPage.xaml
+build_metadata.AdditionalFiles.TargetPath = NewPasswordPage.xaml
+build_metadata.AdditionalFiles.RelativePath = NewPasswordPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/OrderCollectionPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.OrderCollectionPage.xaml
+build_metadata.AdditionalFiles.TargetPath = OrderCollectionPage.xaml
+build_metadata.AdditionalFiles.RelativePath = OrderCollectionPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/OrderCompletedPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.OrderCompletedPage.xaml
+build_metadata.AdditionalFiles.TargetPath = OrderCompletedPage.xaml
+build_metadata.AdditionalFiles.RelativePath = OrderCompletedPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/OrderHistoryPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.OrderHistoryPage.xaml
+build_metadata.AdditionalFiles.TargetPath = OrderHistoryPage.xaml
+build_metadata.AdditionalFiles.RelativePath = OrderHistoryPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/OrderPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.OrderPage.xaml
+build_metadata.AdditionalFiles.TargetPath = OrderPage.xaml
+build_metadata.AdditionalFiles.RelativePath = OrderPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/PaginaIniziale.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.PaginaIniziale.xaml
+build_metadata.AdditionalFiles.TargetPath = PaginaIniziale.xaml
+build_metadata.AdditionalFiles.RelativePath = PaginaIniziale.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/PaginaLogin.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.PaginaLogin.xaml
+build_metadata.AdditionalFiles.TargetPath = PaginaLogin.xaml
+build_metadata.AdditionalFiles.RelativePath = PaginaLogin.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/PaginaRegistrazione.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.PaginaRegistrazione.xaml
+build_metadata.AdditionalFiles.TargetPath = PaginaRegistrazione.xaml
+build_metadata.AdditionalFiles.RelativePath = PaginaRegistrazione.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/PremiumPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.PremiumPage.xaml
+build_metadata.AdditionalFiles.TargetPath = PremiumPage.xaml
+build_metadata.AdditionalFiles.RelativePath = PremiumPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/ProductPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.ProductPage.xaml
+build_metadata.AdditionalFiles.TargetPath = ProductPage.xaml
+build_metadata.AdditionalFiles.RelativePath = ProductPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/ProfilePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.ProfilePage.xaml
+build_metadata.AdditionalFiles.TargetPath = ProfilePage.xaml
+build_metadata.AdditionalFiles.RelativePath = ProfilePage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/PromoPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.PromoPage.xaml
+build_metadata.AdditionalFiles.TargetPath = PromoPage.xaml
+build_metadata.AdditionalFiles.RelativePath = PromoPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/Resources/Styles/Colors.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.Resources.Styles.Colors.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Colors.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Colors.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/Resources/Styles/Styles.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.Resources.Styles.Styles.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/SchoolAdmin.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.SchoolAdmin.xaml
+build_metadata.AdditionalFiles.TargetPath = SchoolAdmin.xaml
+build_metadata.AdditionalFiles.RelativePath = SchoolAdmin.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/SettingsPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.SettingsPage.xaml
+build_metadata.AdditionalFiles.TargetPath = SettingsPage.xaml
+build_metadata.AdditionalFiles.RelativePath = SettingsPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/SupportPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.SupportPage.xaml
+build_metadata.AdditionalFiles.TargetPath = SupportPage.xaml
+build_metadata.AdditionalFiles.RelativePath = SupportPage.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/TutorialIniziale.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.TutorialIniziale.xaml
+build_metadata.AdditionalFiles.TargetPath = TutorialIniziale.xaml
+build_metadata.AdditionalFiles.RelativePath = TutorialIniziale.xaml
+
+[C:/Users/pietr/Downloads/SnackUpClientHomeECarrello/SnackUpClient/SnackUpClient/WalletPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SnackUpClient.WalletPage.xaml
+build_metadata.AdditionalFiles.TargetPath = WalletPage.xaml
+build_metadata.AdditionalFiles.RelativePath = WalletPage.xaml

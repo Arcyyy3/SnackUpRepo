@@ -1,0 +1,126 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SnackUpClient.WalletPage"
+             Title="WalletPage">
+    <VerticalStackLayout Spacing="20" Padding="0">
+        <!-- Testo o elementi sopra l'area animata -->
+        <Label Text="Rotazione Frame"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <!-- Contenitore dell'animazione -->
+        <Frame 
+               BorderColor="Gray"
+               Padding="0"
+               HeightRequest="350"
+               HorizontalOptions="Center">
+            <!-- AbsoluteLayout incapsulato -->
+            <AbsoluteLayout>
+                <!-- Border frontale -->
+                <Border x:Name="FrontFrame"
+                        HeightRequest="200"
+                        StrokeThickness="0"
+                        Padding="10,5,10,5"
+                        Margin="10"
+                        Stroke="Transparent"
+                        BackgroundColor="Transparent"
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, 1"
+                        AbsoluteLayout.LayoutFlags="All"
+                        StrokeShape="RoundRectangle 20">
+                    <Border.Background>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF7B21" Offset="0.4" />
+                            <GradientStop Color="#FDCE23" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" 
+                                Opacity="0.2" 
+                                Radius="30" 
+                                Offset="0,0" />
+                    </Border.Shadow>
+                    <!-- Contenuto del FrontFrame -->
+                    <StackLayout Spacing="5" Margin="5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <!-- Primo Label -->
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <Label Text="Saldo del portafoglio"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   FontFamily="Roboto-Medium"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start" />
+                            <!-- Spacer -->
+                            <BoxView HorizontalOptions="FillAndExpand" VerticalOptions="Center" BackgroundColor="Transparent" />
+                            <Image Source="logo_tutorial_uno.png"
+                                   WidthRequest="25"
+                                   HeightRequest="25"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="End" />
+                        </StackLayout>
+                        <!-- SALDO RIMANENTE -->
+                        <Label x:Name="SaldoLabel"
+                               FontSize="25"
+                               FontFamily="Roboto-Black"
+                               Margin="0,-4,0,0"
+                               TextColor="White"
+                               HorizontalOptions="Start" />
+                        <!-- Bottone -->
+                        <Button Text="Visualizza"
+                                FontSize="14"
+                                FontFamily="Roboto-Medium"
+                                Margin="0,10,0,0"
+                                BorderColor="White"
+                                BorderWidth="1.2"
+                                BackgroundColor="Transparent"
+                                TextColor="White"
+                                CornerRadius="20"
+                                Padding="12,0,12,0"
+                                HeightRequest="32"
+                                                    
+                                HorizontalOptions="Start" />
+                    </StackLayout>
+                </Border>
+
+                <!-- Border posteriore -->
+                <Border x:Name="BackFrame"
+                        HeightRequest="200"
+                        StrokeThickness="0"
+                        Padding="10,5,10,5"
+                        Margin="10"
+                        Stroke="Transparent"
+                        BackgroundColor="Transparent"
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, 1"
+                        AbsoluteLayout.LayoutFlags="All"
+                        IsVisible="False"
+                        StrokeShape="RoundRectangle 20">
+                    <Border.Background>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF7B21" Offset="0.4" />
+                            <GradientStop Color="#FDCE23" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" 
+                                Opacity="0.2" 
+                                Radius="30" 
+                                Offset="0,0" />
+                    </Border.Shadow>
+                    <!-- Contenuto del BackFrame -->
+                    <StackLayout Spacing="5" Margin="5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="Contenuto del retro"
+                               FontSize="14"
+                               TextColor="White"
+                               FontFamily="Roboto-Medium"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </Border>
+            </AbsoluteLayout>
+        </Frame>
+
+        <!-- Bottone per il flip -->
+        <Button Text="Flip"
+                HorizontalOptions="Center"
+                Clicked="OnFlipButtonClicked" />
+    </VerticalStackLayout>
+</ContentPage>

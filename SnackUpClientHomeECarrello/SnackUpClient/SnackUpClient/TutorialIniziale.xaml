@@ -1,0 +1,134 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SnackUpClient"
+             x:Class="SnackUpClient.TutorialIniziale"
+             Title="prova">
+    <Grid>
+        <!-- Immagine di sfondo condivisa -->
+        <Image x:Name="BackgroundImage"
+               Source="sfondotutorial.svg"
+               Aspect="Fill"
+               WidthRequest="2500"
+               Opacity="1"
+               HorizontalOptions="Start"
+               VerticalOptions="End"
+               HeightRequest="800"
+               TranslationX="0" />
+
+        <!-- Carosello -->
+        <CarouselView x:Name="carouselView"
+                      IndicatorView="indicatorView"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand"
+                      Margin="0"
+                      Loop="False"
+                      PositionChanged="OnCarouselPositionChanged">
+            <CarouselView.ItemsSource>
+                <x:Array Type="{x:Type local:PresentationItem}">
+                    <local:PresentationItem Title="Un modo innovativo di gustare a scuola" 
+                                Description="Scopri una selezione di snack freschi e genuini, preparati ogni giorno."
+                                ImageSource="gifuno.gif"
+                                Width="290" 
+                                Height="290" />
+                    <local:PresentationItem Title="Promozioni che premiano il tuo gusto" 
+                                Description="Scopri promozioni uniche e vantaggi dedicati ai tuoi ordini."
+                                ImageSource="gifdue.gif"
+                                Width="230" 
+                                Height="230" />
+                    <local:PresentationItem Title="Ordina in pochi clic, è semplice!" 
+                                Description="Prenotare il tuo snack preferito non è mai stato così facile."
+                                ImageSource="giftre.gif"
+                                Width="230" 
+                                Height="230" />
+                    <local:PresentationItem Title="Puntualità e freschezza in classe" 
+                                Description="Ricevi i tuoi snack direttamente in classe, confezionati con cura."
+                                ImageSource="gifquattro.gif"
+                                Width="230" 
+                                Height="230" />
+                </x:Array>
+            </CarouselView.ItemsSource>
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <!-- Contenuto principale -->
+                        <Grid>
+                            <!-- Frame principale -->
+                            <Border Background="White"
+                                Stroke="Transparent"
+                                StrokeShape="RoundRectangle 150"
+                                HeightRequest="250"
+                                WidthRequest="250"
+                                VerticalOptions="Start"
+                                Margin="0,115,0,0">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" 
+                                Opacity="0.2" 
+                                Radius="30" 
+                                Offset="5,5" />
+                                </Border.Shadow>
+                                <Image Source="{Binding ImageSource}" 
+                                       Aspect="AspectFit"
+                                       WidthRequest="{Binding Width}" 
+                                       HeightRequest="{Binding Height}"
+                                       Margin="0,10,0,0" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Testi sotto il contenuto -->
+                        <VerticalStackLayout VerticalOptions="End" Padding="20" Margin="10,0,50,100">
+                            <!-- Titolo -->
+                            <Label Text="{Binding Title}" 
+                                   FontSize="32" 
+                                   FontFamily="Roboto-Black" 
+                                   TextColor="#FF7B21" 
+                                   HorizontalTextAlignment="Start" />
+                            <!-- Descrizione -->
+                            <Label Text="{Binding Description}" 
+                                   FontSize="16" 
+                                   FontFamily="Roboto-Medium" 
+                                   HorizontalTextAlignment="Start" 
+                                   Margin="0,10,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <!-- IndicatorView -->
+        <IndicatorView x:Name="indicatorView"
+                       HorizontalOptions="Center"
+                       VerticalOptions="End"
+                       IndicatorColor="#E6E6E6"
+                       SelectedIndicatorColor="#FF7B21"
+                       Margin="25" />
+
+        <!-- Bottoni aggiuntivi -->
+        <Button x:Name="nextButton"
+                Text="Avanti"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                FontAttributes="Bold"
+                CornerRadius="15"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                Margin="20"
+                Clicked="OnNextButtonClicked" />
+
+        <Button x:Name="startButton"
+                Text="Iniziamo!"
+                Clicked="OnStartButtonClicked"
+                BackgroundColor="#FF7B21"
+                BorderColor="Transparent"
+                TextColor="White"
+                FontSize="18"
+                FontFamily="Roboto-Medium"
+                CornerRadius="35"
+                VerticalOptions="End"
+                HorizontalOptions="FillAndExpand"
+                HeightRequest="50"
+                Margin="30,20,30,40"
+                IsVisible="False" />
+    </Grid>
+</ContentPage>

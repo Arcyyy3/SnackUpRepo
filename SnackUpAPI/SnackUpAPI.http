@@ -1,0 +1,6 @@
+@SnackUpAPI_HostAddress = http://localhost:5199
+
+GET {{SnackUpAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

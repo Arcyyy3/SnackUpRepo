@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             BackgroundColor="#F1F1F1"
+             Padding="0,10,0,0"
+             x:Class="SnackUpClient.HomePage"
+             
+             >
+
+
+
+    <Grid >
+        <!-- Overlay trasparente -->
+        <BoxView x:Name="Overlay"
+         BackgroundColor="Black"
+         Opacity="0"
+         IsVisible="False"
+         ZIndex="2"
+         InputTransparent="False">
+            <BoxView.GestureRecognizers>
+                <!-- Tocco per chiudere il menu -->
+                <TapGestureRecognizer Tapped="OnOverlayTapped" />
+                <!-- Swipe verso sinistra per chiudere il menu -->
+                <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Menù laterale -->
+
+        <StackLayout x:Name="MenuPanel"
+             Opacity="1"
+             WidthRequest="275"
+             BackgroundColor="#F2F2F2"
+             HorizontalOptions="Start"
+             VerticalOptions="Fill"
+             TranslationX="-265" 
+             IsVisible="False"
+             ZIndex="3">
+
+            <Label Text="Menu" FontSize="24" FontFamily="Roboto-Bold" Padding="10,20,20,20" Margin="10,10,10,-20" />
+
+            <Frame BackgroundColor="White"
+                   CornerRadius="35"
+                   BorderColor="Transparent"
+                   HeightRequest="1000"
+                   Padding="0,20,0,10"
+                   Margin="0,20,30,0"
+                   HasShadow="True">
+
+                <StackLayout>
+                    <Label Text="SnackUp" FontFamily="Roboto-Black" TextColor="#FF7B21" FontSize="25" VerticalOptions="Center" HorizontalOptions="Start" Margin="15,10,10,10"/>
+                    <Border HeightRequest="135"
+                        StrokeThickness="0"
+                        Padding="10,5,10,5"
+                        Margin="10"
+                        Stroke="Transparent"
+                        BackgroundColor="Transparent"
+                        StrokeShape="RoundRectangle 20"
+                        >
+                        <Border.Background>
+                            <LinearGradientBrush>
+                                <GradientStop Color="#FF7B21" Offset="0.4" />
+                                <GradientStop Color="#FDCE23" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Shadow>
+                            <Shadow Brush="Black" 
+                            Opacity="0.2" 
+                            Radius="30" 
+                            Offset="0,0" />
+                        </Border.Shadow>
+
+                        <StackLayout Spacing="5" Margin="5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <!-- Primo Label -->
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                <Label Text="Saldo del portafoglio"
+                               FontSize="14"
+                               TextColor="White"
+                               FontFamily="Roboto-Medium"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start" />
+                                <!-- Spacer -->
+                                <BoxView HorizontalOptions="FillAndExpand" VerticalOptions="Center" BackgroundColor="Transparent" />
+                                <Image Source="logo_tutorial_uno.png"
+                               WidthRequest="25"
+                               HeightRequest="25"
+                               HorizontalOptions="End"
+                               VerticalOptions="End" />
+                            </StackLayout>
+
+                            <!-- SALDO RIMANENTE -->
+                            <Label x:Name="SaldoLabel"
+                               FontSize="25"
+                               FontFamily="Roboto-Black"
+                               Margin="0,-4,0,0"
+                               TextColor="White"
+                               HorizontalOptions="Start" />
+
+                            <!-- Bottone -->
+                            <Button Text="Visualizza"
+                                FontSize="14"
+                                FontFamily="Roboto-Medium"
+                                Margin="0,10,0,0"
+                                BorderColor="White"
+                                BorderWidth="1.2"
+                                BackgroundColor="Transparent"
+                                TextColor="White"
+                                CornerRadius="20"
+                                Padding="12,0,12,0"
+                                HeightRequest="32"
+                                Clicked="NavigateToWalletPage"                    
+                                HorizontalOptions="Start" />
+                        </StackLayout>
+                    </Border>
+
+
+                    <!-- Bottone Storico Ordini -->
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameHistory" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Image Source="storico_ordini_menu.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                            <Label Text="Storico ordini" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToOrderHistoryPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <!-- Bottone Promozioni -->
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFramePromo" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Image Source="promozioni_menu.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                            <Label Text="Promozioni" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToPromoPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <!-- Bottone Abbonamento -->
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFramePlus" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Image Source="abbonamento_menu.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                            <Label Text="Abbonamento" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToPremiumPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <!-- Bottone Impostazioni -->
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameSettings" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Image Source="impostazioni_menu.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                            <Label Text="Impostazioni" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToSettingsPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <!-- Bottone Supporto e Assistenza -->
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameSupport" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Image Source="supporto_menu.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                            <Label Text="Supporto e Assistenza" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToSupportPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent" x:Name="InnerFrameAdminEX" >
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameAdmin" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Label Text="AdminPage" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToAdminPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent" x:Name="InnerFrameProducerEX">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameProducer" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Label Text="ProducerPage" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToProducerPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent" x:Name="InnerFrameSchoolAdminEX" >
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameSchoolAdmin" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Label Text="SchoolAdminPage" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToSchoolAdminPage" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                    <Frame Margin="-2, 8" Padding="0,0,0,0" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent" x:Name="InnerFrameCodiceRecezioneEX">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame x:Name="InnerFrameCodiceRecezione" Margin="-17,0,0,0" CornerRadius="15" BorderColor="Transparent" BackgroundColor="Transparent" HeightRequest="40"/>
+                            <Label Text="CodiceRecezione" VerticalOptions="Center" />
+                        </StackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="NavigateToCodiceRecezionePage1" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                    <Label Text="Versione 1.0 Beta" HorizontalTextAlignment="Center" Margin="0,110" TextColor="LightGray" FontSize="10" VerticalOptions="Center" />
+
+                </StackLayout>
+            </Frame>
+
+        </StackLayout>
+
+
+
+        <Grid x:Name="MainContent" TranslationX="0" ZIndex="1">
+
+                    <!-- Contenitore per il contenuto principale e TabBar -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <!-- Contenuto principale -->
+                    <RowDefinition Height="Auto" />
+                    <!-- TabBar -->
+                </Grid.RowDefinitions>
+
+                <!-- Contenuto principale -->
+                <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never" >
+
+                    <Grid>
+                        <!-- Schermata principale -->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Icona Menù Hamburger -->
+                        <ImageButton 
+                         Source="hamburger_menu.svg"
+                         WidthRequest="35" HeightRequest="35"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Start"
+                         Margin="30,30,20,10"
+                         Clicked="OnMenuClicked"
+                         Grid.Row="0" />
+
+                        <!-- Testi sotto l'icona -->
+                        <StackLayout Orientation="Vertical" Padding="0" Grid.Row="1" Margin="30,0,0,10">
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Ciao " FontSize="30" FontFamily="Roboto-Black"/>
+                                        <Span Text="{Binding UserName}" FontSize="30" FontFamily="Roboto-Black"/>
+                                        <Span Text="," FontSize="30" FontFamily="Roboto-Black"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Text="Cosa ordiniamo oggi?" FontSize="17" Margin="0,8,0,0" FontFamily="Roboto-Medium"/>
+                        </StackLayout>
+
+
+                        <!-- Blocco espandibile -->
+                        <Frame CornerRadius="35" BackgroundColor="White" BorderColor="Transparent" Padding="0,25,0,5" Margin="0,10,0,20" HasShadow="True" Grid.Row="2">
+                            <StackLayout Orientation="Vertical">
+                                <Grid ColumnDefinitions="*,Auto" Padding="30,0,20,10">
+                                    <!-- Titolo a sinistra -->
+                                    <Label Text="In evidenza per Te"
+                                               FontSize="18"
+                                               FontFamily="Roboto-Bold"
+                                               VerticalOptions="Center"
+                                               Grid.Column="0" />
+                                    <!-- Testo "Vedi tutto" a destra -->
+                                    <Label Grid.Column="1"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="End">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Vedi tutto"
+                                              TextColor="#FF7B21"
+                                              FontSize="14"
+                                              FontFamily="Roboto-Medium"
+                                              TextDecorations="Underline" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding NavigateToPreferitiPageCommand}" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                </Grid>
+                                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" HeightRequest="200" Margin="0,10,0,-10">
+                                    <StackLayout x:Name="FoodItemsContainer" Orientation="Horizontal" Spacing="20" Padding="30,0,0,0" BindableLayout.ItemsSource="{Binding FoodItems}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate>
+                                                <Frame CornerRadius="0" Padding="0" BackgroundColor="Transparent" BorderColor="Transparent" WidthRequest="122" HeightRequest="200">
+                                                    <Frame.GestureRecognizers>
+                                                        <TapGestureRecognizer Tapped="OnProductTapped" CommandParameter="{Binding .}" />
+                                                    </Frame.GestureRecognizers>
+                                                    <StackLayout>
+                                                        <Grid>
+                                                            <!-- Frame con l'immagine -->
+                                                            <Frame CornerRadius="25" Padding="0" IsClippedToBounds="True" WidthRequest="120" HeightRequest="120" BackgroundColor="Transparent" InputTransparent="True">
+                                                                <Image Source="{Binding Image}" Aspect="AspectFill" WidthRequest="120" HeightRequest="120" />
+
+                                                            </Frame>
+                                                            <!-- Banner "In Esaurimento" -->
+                                                            <Frame CornerRadius="20"
+                                                               BackgroundColor="#FF7B21"
+                                                               Padding="5,0,5,0"
+                                                               Margin="6"
+                                                               BorderColor="#FF7B21"
+                                                               HorizontalOptions="End"
+                                                               VerticalOptions="Start"
+                                                               IsVisible="{Binding IsLowStock}">
+                                                                <Label Text="9 rimanenti"
+                                                                   TextColor="White"
+                                                                   FontSize="10"
+                                                                   HorizontalOptions="Center"
+                                                                   VerticalOptions="Center" />
+                                                            </Frame>
+                                                        </Grid>
+                                                        <!-- Testo -->
+                                                        <Label Text="{Binding Title}" FontSize="16" FontFamily="Roboto-Bold" Margin="0,5,0,2" />
+                                                        <Label Text="{Binding Description}" FontSize="12" />
+                                                    </StackLayout>
+                                                </Frame>
+
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </StackLayout>
+                                </ScrollView>
+                                <ImageButton Source="arrow_down.png"
+                                             Padding="10"
+                             WidthRequest="100" HeightRequest="38"
+                             HorizontalOptions="Center" VerticalOptions="End"
+                             Rotation="0" 
+                             Clicked="OnExpandClicked" 
+                             Margin="0,-10,0,-5"/>
+                                <StackLayout x:Name="FavoritesContent"
+                                             IsVisible="False"
+                                             HeightRequest="0"
+                                             Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="*,Auto" Padding="30,0,20,10">
+                                        <!-- Titolo a sinistra -->
+                                        <Label Text="I tuoi Preferiti"
+                                               FontSize="18"
+                                               FontFamily="Roboto-Bold"
+                                               VerticalOptions="Center"
+                                               Grid.Column="0" />
+                                        <!-- Testo "Vedi tutto" a destra -->
+                                        <Label Grid.Column="1"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Vedi tutto"
+                                              TextColor="#FF7B21"
+                                              FontSize="14"
+                                              FontFamily="Roboto-Medium"
+                                              TextDecorations="Underline" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding NavigateToEvidenzaPageCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
+                                    <ScrollView Orientation="Horizontal"
+                                HeightRequest="200"
+                                Margin="0,10,0,0"
+                                HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
+                                        <StackLayout Orientation="Horizontal"
+                                     Spacing="20"
+                                     Padding="30,0,0,0"
+                                     BindableLayout.ItemsSource="{Binding FavoriteItems}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Frame CornerRadius="0"
+                                               Padding="0"
+                                               BackgroundColor="Transparent"
+                                               BorderColor="Transparent"
+                                               WidthRequest="122"
+                                               HeightRequest="200">
+                                                        <Frame.GestureRecognizers>
+                                                            <TapGestureRecognizer Tapped="OnProductTapped" />
+                                                        </Frame.GestureRecognizers>
+                                                        <StackLayout>
+                                                            <Grid>
+                                                                <Frame CornerRadius="25"
+                                                               Padding="0"
+                                                               IsClippedToBounds="True"
+                                                               WidthRequest="120"
+                                                               
+                                                               HeightRequest="120"
+                                                               BackgroundColor="Transparent" InputTransparent="True">
+
+                                                                    <Image Source="{Binding Image}"
+                                                                   WidthRequest="120" Aspect="AspectFill"
+                                                                   HeightRequest="120" />
+
+                                                                </Frame>
+                                                                <!-- Banner "In Esaurimento" -->
+                                                                <Frame CornerRadius="20"
+                                                                        BackgroundColor="#FF7B21"
+                                                                        Padding="5,0,5,0"
+                                                                        Margin="6"
+                                                                        BorderColor="#FF7B21"
+                                                                        HorizontalOptions="End"
+                                                                        VerticalOptions="Start"
+                                                                        IsVisible="{Binding IsLowStock}">
+                                                                    <Label Text="9 rimanenti"
+                                                                            TextColor="White"
+                                                                            FontSize="10"
+                                                                            HorizontalOptions="Center"
+                                                                            VerticalOptions="Center" />
+                                                                </Frame>
+                                                            </Grid>
+
+                                                            <Label Text="{Binding Title}"
+                                                           FontSize="16"
+                                                           FontFamily="Roboto-Bold"
+                                                           Margin="0,5,0,2" />
+                                                            <Label Text="{Binding Description}"
+                                                             FontSize="12" />
+                                                        </StackLayout>
+                                                    </Frame>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </StackLayout>
+                                    </ScrollView>
+                                </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                        <StackLayout Grid.Row="3" Margin="30,0,30,0">
+
+                            <Label Text="Ordina subito"
+                                       FontSize="30"
+                                       Margin="0,0,0,20"
+                                       FontFamily="Roboto-Bold"
+                                       HorizontalOptions="Start" 
+                                />
+                            <Frame CornerRadius="100" HeightRequest="50" BackgroundColor="White" BorderColor="Transparent">
+                                <VerticalStackLayout  Background="Transparent">
+                                    <!-- Barra di ricerca -->
+                                    <SearchBar Placeholder="Cerca prodotti" HeightRequest="40"
+                                   Text="{Binding SearchText}" 
+                                   SearchCommand="{Binding SearchCommand}" 
+                                    TextColor="#171717" PlaceholderColor="#171717" Visual="Default"  CancelButtonColor="#171717"/>
+
+                                    <!-- Lista dei prodotti filtrati -->
+                                    <CollectionView ItemsSource="{Binding FilteredProducts}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Label Text="{Binding Nome}" 
+                                                           FontSize="16" 
+                                                           TextColor="Black" />
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Frame>
+                            <sf:SfTabView Margin="0,10,0,0" TabHeaderPadding="0" HorizontalOptions="Start" TabWidthMode="SizeToContent" IndicatorBackground="#171717" IndicatorStrokeThickness="2" IndicatorCornerRadius="20" IndicatorWidthMode="Stretch" x:Name="MainTabView" SelectionChanged="OnTabSelectionChanged">
+
+                                <!-- Elenco delle schede -->
+                                <sf:SfTabView.Items>
+                                    <sf:SfTabItem Header="Salato" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="SalatoContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Dolce" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="DolceContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Fit" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="FitContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Vegan" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="VeganContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Gluten Free" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="GlutenFreeContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Bevande" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="BevandeContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                    <sf:SfTabItem Header="Altro" FontFamily="Roboto-Bold" TextColor="#171717">
+                                        <StackLayout x:Name="AltroContent">
+
+                                        </StackLayout>
+                                    </sf:SfTabItem>
+                                </sf:SfTabView.Items>
+                            </sf:SfTabView>
+
+
+
+                            <Frame BackgroundColor="Transparent" BorderColor="Transparent" Padding="0,5,0,10" Margin="-30,0,-30,100">
+                                <StackLayout Orientation="Vertical">
+                                    <!-- Sezione per mostrare nuovi prodotti -->
+                                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" HeightRequest="310" Margin="0,0,0,0">
+                                        <StackLayout x:Name="NewFoodItemsContainer" Orientation="Horizontal" Spacing="20" Padding="20" BindableLayout.ItemsSource="{Binding NewFoodItems}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate>
+                                                    <!-- Contenitore esterno -->
+                                                    <Grid WidthRequest="180" HeightRequest="250">
+                                                        <!-- Altezza totale aumentata per includere il pulsante -->
+                                                        <!-- Frame con contenuto del prodotto -->
+                                                        <Frame CornerRadius="35" Padding="0" BackgroundColor="White" BorderColor="Transparent" WidthRequest="180" HeightRequest="280">
+                                                            <Frame.GestureRecognizers>
+                                                                <TapGestureRecognizer Tapped="OnProductTapped" />
+                                                            </Frame.GestureRecognizers>
+                                                            <StackLayout Spacing="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                                                <Grid>
+                                                                    <!-- Immagine rotonda -->
+                                                                    <Frame CornerRadius="100" WidthRequest="130" HeightRequest="130" BackgroundColor="White" Padding="0" IsClippedToBounds="True" InputTransparent="True">
+                                                                        <Image Source="{Binding Image}" WidthRequest="130" HeightRequest="130" Aspect="AspectFill" />
+                                                                    </Frame>
+                                                                    <!-- Banner "In Esaurimento" -->
+                                                                    <Frame CornerRadius="20"
+                                                                            BackgroundColor="#FF7B21"
+                                                                            Padding="5,0,5,0"
+                                                                            Margin="6"
+                                                                            BorderColor="#FF7B21"
+                                                                            HorizontalOptions="End"
+                                                                            VerticalOptions="Start"
+                                                                            IsVisible="{Binding IsLowStock}">
+                                                                        <Label Text="9 rimanenti"
+                                                                                TextColor="White"
+                                                                                FontSize="10"
+                                                                                HorizontalOptions="Center"
+                                                                                VerticalOptions="Center" />
+                                                                    </Frame>
+                                                                </Grid>
+                                                                <!-- Titolo -->
+                                                                <Label Text="{Binding Title}" FontSize="14" FontFamily="Roboto-Bold" HorizontalTextAlignment="Center" TextColor="Black" />
+
+                                                                <!-- Descrizione -->
+                                                                <Label Text="{Binding Description}" FontSize="12" HorizontalTextAlignment="Center" TextColor="#9E9E9E" />
+
+                                                                <!-- Link "Vedi Info" -->
+                                                                <Label Text="Vedi Info" FontSize="12" Padding="4" HorizontalTextAlignment="Center" TextColor="#FF7B21" />
+                                                                <Button x:Name="AddButton"
+                                                                        Text="Aggiungi"
+                                                                        Padding="0"
+                                                                        WidthRequest="100"
+                                                                        HeightRequest="30"
+                                                                        BorderColor="Transparent"
+                                                                        CornerRadius="15"
+                                                                        FontSize="14"
+                                                                        BackgroundColor="#FF7B21"
+                                                                        TextColor="White"
+                                                                        VerticalOptions="Center"
+                                                                        HorizontalOptions="Center"
+                                                                        Clicked="OnProductTapped"
+                                                                        CommandParameter="{Binding .}" />
+
+                                                            </StackLayout>
+                                                        </Frame>
+
+                                                        <!-- Spostato verso il basso per sovrapporsi al bordo -->
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </StackLayout>
+                                    </ScrollView>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </Grid>
+                </ScrollView>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

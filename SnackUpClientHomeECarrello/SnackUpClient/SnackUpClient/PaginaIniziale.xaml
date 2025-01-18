@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             x:Class="SnackUpClient.PaginaIniziale"
+             Padding="0,10,0,0"
+             >
+
+    <Grid>
+        <ScrollView HorizontalScrollBarVisibility="Never" 
+            VerticalScrollBarVisibility="Never">
+            <!-- Stack principale -->
+        <VerticalStackLayout VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Padding="0">
+
+            <!-- Titolo -->
+            <Label Text="Ti diamo il benvenuto su SnackUp!"
+                   FontSize="28"
+                   
+                   HorizontalTextAlignment="Center" 
+                   FontFamily="Roboto-Black"
+                   TextColor="#FF7B21"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start"
+                   Margin="30,40,30,10" />
+            <Label Text="la tua piattaforma per snack freschi e genuini."
+               FontSize="18"
+               Padding="60,0,60,0"
+               HorizontalTextAlignment="Center" 
+               FontFamily="Roboto-Bold"
+               TextColor="#171717"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+                />
+
+            <!-- SkiaSharp Animation -->
+            <skia:SKLottieView
+                
+                Source="paginainiziale.json"
+                HeightRequest="350"
+                WidthRequest="350"
+                RepeatCount="-1"
+                RepeatMode="Reverse"
+                
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                 />
+
+            <!-- Pulsanti -->
+            <VerticalStackLayout VerticalOptions="EndAndExpand" Margin="0,40,0,0">
+                <!-- Pulsante Accedi -->
+                <Button Text="Accedi"
+                        Clicked="OnStartButtonClicked"
+                        BackgroundColor="#FF7B21"
+                        BorderColor="Transparent"
+                        TextColor="White"
+                        FontSize="16"
+                        FontFamily="Roboto-Medium"
+                        CornerRadius="35"
+                        VerticalOptions="End"
+                        HorizontalOptions="FillAndExpand"
+                        HeightRequest="50"
+                        Margin="30,-20,30,0"/>
+
+                <!-- Pulsante Registrati -->
+                <Button Text="Registrati"
+                    Clicked="OnStartButtonClicked2"
+                    FontFamily="Roboto-Medium"
+                    FontSize="16"
+                    CornerRadius="35"
+                    BorderColor="#E0E0E0"
+                    BorderWidth="1"
+                    HeightRequest="50"
+                    Margin="30,20,30,30"
+                    >
+                </Button>
+            </VerticalStackLayout>
+
+            <!-- Social Media -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="25">
+                <Image Source="instagram_icon.svg" WidthRequest="30" HeightRequest="26" BackgroundColor="Transparent" />
+                <Image Source="facebook_icon.svg" WidthRequest="30" HeightRequest="25" BackgroundColor="Transparent" />
+                <Image Source="linkedin_icon.svg" WidthRequest="30" HeightRequest="26" BackgroundColor="Transparent" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

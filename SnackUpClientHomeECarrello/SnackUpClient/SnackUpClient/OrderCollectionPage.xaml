@@ -1,0 +1,170 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SnackUpClient.OrderCollectionPage"
+             Title="Product Page"
+             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             Background="#F7F7F7"
+             >
+
+    <Grid RowDefinitions="*,Auto">
+
+
+
+        <ScrollView Grid.Row="0" Background="Transparent" x:Name="MainScrollView" HorizontalScrollBarVisibility="Never" 
+        VerticalScrollBarVisibility="Never">
+            <StackLayout Orientation="Vertical">
+                <StackLayout Orientation="Horizontal" Padding="30,30,20,22" Background="Transparent">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackButtonClicked" />
+                    </StackLayout.GestureRecognizers>
+                    <Image Source="arrow_left.png" HeightRequest="20"
+                   WidthRequest="20" BackgroundColor="Transparent"
+                   HorizontalOptions="Start" VerticalOptions="Start"/>
+                </StackLayout>
+                <Label Text="Ritiro ordine" Padding="0" Grid.Row="1" Margin="30,0,0,0" FontSize="30" FontFamily="Roboto-Black"></Label>
+                <StackLayout Padding="30,10,30,20">
+                    <Label Text="Recati al punto di consegna e ritira la busta mostrando il codice di conferma al fornitore."/>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="30,0,30,10">
+                    <!-- Label a sinistra -->
+                    <Label Text="Classe:  " HorizontalOptions="Start" FontSize="24" TextColor="#FF7B21" 
+                           FontFamily="Roboto-Bold" VerticalOptions="Center" />
+
+                    <!-- Label a destra con Binding -->
+                    <Label HorizontalOptions="Start" VerticalOptions="Center" FontFamily="Roboto-Bold" FontSize="24" TextColor="#FF7B21">
+                        <Label.Text>
+                            <Binding Path="ClassSection" />
+                        </Label.Text>
+                    </Label>
+
+                </StackLayout>
+
+                <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="30,0,30,0"/>
+
+                <CollectionView ItemsSource="{Binding OrdiniInCorso}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid BackgroundColor="Transparent" Padding="30,0,30,0">
+
+                                <Frame Padding="0" BorderColor="Transparent" Background="Transparent">
+                                    <StackLayout>
+                                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto" BackgroundColor="Transparent">
+                                            <!-- Parte sinistra: Dettagli ordine -->
+                                            <VerticalStackLayout Grid.Column="0" Grid.Row="0">
+                                                <Label Text="{Binding Studente}"
+                                       FontSize="16"
+                                       Margin="0,10,0,0"
+                                       FontFamily="Roboto-Bold"
+                                       TextColor="#171717" />
+                                                <!-- Elenco prodotti -->
+                                                <CollectionView ItemsSource="{Binding Prodotti}"
+                                            Margin="0,10,0,15">
+                                                    <CollectionView.ItemsLayout>
+                                                        <LinearItemsLayout Orientation="Vertical" />
+                                                    </CollectionView.ItemsLayout>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <HorizontalStackLayout>
+                                                                <Label Text="●"
+                                                   FontSize="14"
+                                                   TextColor="#FF7B21"
+                                                   VerticalOptions="Center"
+                                                   FontFamily="Roboto-Bold"/>
+                                                                <!-- Nome prodotto -->
+                                                                <Label Text="{Binding Nome}"
+                                               FontSize="14"
+                                               Margin="10,0,0,2"
+                                               TextColor="#171717"
+                                               FontFamily="Roboto"
+                                               HorizontalOptions="End" />
+                                                                <!-- Quantità prodotto -->
+                                                                <Label Text="{Binding QuantitàFormattata}"
+                                               FontSize="14"
+                                               TextColor="#171717"
+                                               FontFamily="Roboto"
+                                               HorizontalOptions="Center" />
+
+                                                            </HorizontalStackLayout>
+
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                        <BoxView HeightRequest="1" BackgroundColor="LightGray"/>
+                                    </StackLayout>
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+        <!-- Contenitore Fisso per il Bottoneeeeeeeeeeeeeeeeeeeeeeee -->
+        <Border Grid.Row="1"
+        BackgroundColor="White"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 0"
+        ZIndex="10"
+        Padding="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" 
+                Opacity="0.2" 
+                Radius="30" 
+                Offset="0,5" />
+            </Border.Shadow>
+            <StackLayout>
+
+                <Button x:Name="AddToCartButton"
+                            Margin="20"
+                Text="Ottieni il codice"
+                BorderColor="#FF7B21"
+                BackgroundColor="#FF7B21"
+                TextColor="White"
+                BorderWidth="1.5"
+                FontFamily="Roboto-Medium"
+                FontSize="15"
+                CornerRadius="35"
+                HeightRequest="50"
+                Clicked="OnAddToCartClicked" />
+
+            </StackLayout>
+        </Border>
+
+        <!--ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo Bottom Sheet DOVRAI COLLEGARE AL CARELLO QUESTO MI RACCOMANDO ooooooooooooooooo-->
+        <Border x:Name="BottomSheet"
+        BackgroundColor="White"
+        Stroke="LightGray"
+        StrokeThickness="1"
+        Margin="-1,0,-1,-2"
+        HeightRequest="402"
+        Padding="15"
+        TranslationY="300"
+        IsVisible="False"
+        VerticalOptions="End">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="25,25,0,0" />
+            </Border.StrokeShape>
+            <Grid RowDefinitions="Auto,*">
+
+                <!-- SkiaSharp Animation -->
+                <skia:SKLottieView
+    Grid.Row="0"
+    Source="ritiro_ordine.json"
+    HeightRequest="480"
+    Margin="0,-120"
+    RepeatCount="-1"
+    RepeatMode="Restart"
+    Background="Transparent"
+    HorizontalOptions="Center"
+    VerticalOptions="Start"
+     />
+                <StackLayout  Grid.Row="1" Margin="0,30,0,0" Spacing="10">
+                    <Label Text="Mostra al fornitore il tuo codice:" HorizontalOptions="Center" FontSize="18" FontFamily="Roboto-Bold"/>
+                    <Label Text="YO6V5C" TextColor="#FF7B21" FontFamily="Roboto-Black" FontSize="36" HorizontalOptions="Center" x:Name="CodiceRecezione"/>
+                </StackLayout>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
