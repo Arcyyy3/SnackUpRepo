@@ -1,0 +1,12 @@
+# Cartelle generiche
+bin/
+obj/
+
+# Cartella dei file di Visual Studio
+.vs/
+
+# File di log
+*.log
+
+# File temporanei
+*.tmp
