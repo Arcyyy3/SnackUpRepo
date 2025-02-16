@@ -1,1 +1,0 @@
-C:\Users\pietr\Downloads\SnackUpClient (1)\SnackUpClient\SnackUpClient\SnackUpClient.csproj;x64
