@@ -94,6 +94,7 @@ public class UserController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [AllowAnonymous]
     [HttpGet("UserIDEmail/{email}")]
     public IActionResult GetUserIdByEmail(string email)
     {
@@ -109,7 +110,7 @@ public class UserController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
-
+    [AllowAnonymous]
     [HttpGet("IsFirstStudentByClass/{schoolClassId}")]
     public IActionResult IsFirstStudentInClass(int schoolClassId)
     {
@@ -248,7 +249,7 @@ public class UserController : ControllerBase
             var userId = _tokenService.GetUserIdFromExpiredToken(request.AccessToken);
             if (userId == null)
             {
-                Debug.WriteLine("❌ Token non valido o non decodificabile.");
+               Debug.WriteLine("❌ Token non valido o non decodificabile.");
                 return Unauthorized("Invalid token."); // HTTP 401
             }
             Console.WriteLine($"✅ UserID estratto dal Token: {userId}");

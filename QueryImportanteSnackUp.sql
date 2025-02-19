@@ -24,6 +24,7 @@ CREATE TABLE Users (
 		Modified DATETIME NULL,
 		Deleted DATETIME NULL
 	);
+    select * from Users
 SELECT W.Balance, U.UserName  FROM Wallets as W inner join Users as U on W.UserID = U.UserID WHERE WalletID = 1 AND W.Deleted IS NULL-- Creazione della tabella SchoolClasses
 CREATE TABLE SchoolClasses (
     SchoolClassID INT PRIMARY KEY IDENTITY(1,1),
@@ -416,6 +417,7 @@ VALUES
 
 INSERT INTO Products (ProductName,BundleID, Description, Details, Raccomandation, Price, ProducerID, PhotoLinkProdotto, Created, Modified, Deleted)
 VALUES
+
 -- Salati
 ('Panino al Prosciutto',NULL, 'Morbido pane bianco farcito con prosciutto crudo e burro', 'Pane, prosciutto crudo, burro', 'Consumare fresco per mantenere il sapore', 4.50, 1, 'panino_prosciutto.jpg', GETDATE(), NULL, NULL),
 ('Trancio di Pizza Margherita',NULL, 'Base soffice con pomodoro fresco e mozzarella filante', 'Farina, pomodoro, mozzarella, origano', 'Meglio consumare caldo', 3.00, 1, 'trancio_pizza.jpg', GETDATE(), NULL, NULL),
@@ -453,8 +455,9 @@ VALUES
 ('Yogurt con Granola',NULL, 'Yogurt naturale con muesli croccante e miele', 'Yogurt, muesli, miele', 'Conservare in frigorifero', 3.50, 1, 'yogurt_granola.jpg', GETDATE(), NULL, NULL),
 
 ('Bundle Colazione',1, 'Bundle Colazione', 'Colazione', 'aa', 10, 1, 'bundle_uno.jpg', GETDATE(), NULL, NULL),
-('Bundle Pranzo',2, 'Bundle Pranzo', 'Pranzo', 'aa', 8, 1, 'bundle_due.jpg', GETDATE(), NULL, NULL);
-
+('Bundle Pranzo',2, 'Bundle Pranzo', 'Pranzo', 'aa', 8, 1, 'bundle_due.jpg', GETDATE(), NULL, NULL),
+('Bundle Secoda merenda',1, 'Bundle Colazione', 'Colazione', 'aa', 10, 1, 'bundle_uno.jpg', GETDATE(), NULL, NULL),
+('Bundle Pranzo Fit',2, 'Bundle Pranzo', 'Pranzo', 'aa', 8, 1, 'bundle_due.jpg', GETDATE(), NULL, NULL);
 
 -- Associazione prodotti ai bundle
 INSERT INTO BundleItems (BundleID, ProductID, Quantity, Created)
@@ -851,6 +854,44 @@ where SchoolClassID=3
 select * from Token
 
 
+  WITH ProductPurchaseSummary AS (
+    SELECT 
+        od.ProductID,
+        SUM(od.Quantity) AS TotalQuantity
+    FROM 
+        Orders o
+        INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
+    WHERE 
+        o.UserID = 9
+    GROUP BY 
+        od.ProductID
+)
+SELECT TOP 5 
+    p.ProductID,
+    p.ProductName,
+    p.Description,
+    p.PhotoLinkProdotto,
+    p.Price,
+    i.QuantityAvailable,
+    i.ReorderLevel,
+    CASE 
+        WHEN i.QuantityAvailable <= i.ReorderLevel THEN 1
+        ELSE 0
+    END AS IsLowStock,
+    ps.TotalQuantity
+FROM 
+    ProductPurchaseSummary ps
+    INNER JOIN Products p ON ps.ProductID = p.ProductID
+    LEFT JOIN Inventory i ON p.ProductID = i.ProductID
+WHERE 
+    p.Deleted IS NULL
+    AND EXISTS (
+        SELECT 1 
+        FROM CategoryProducts cp 
+        WHERE cp.ProductID = p.ProductID AND cp.Deleted IS NULL
+    )
+ORDER BY 
+    ps.TotalQuantity DESC;
 
 
 

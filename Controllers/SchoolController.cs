@@ -47,6 +47,7 @@ public class SchoolController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [AllowAnonymous]
 
     [HttpGet("address/{address}/name/{name}")]
     public IActionResult GetSchoolIDByAddressAndName(string address, string name)
@@ -64,7 +65,7 @@ public class SchoolController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
-
+    [AllowAnonymous]
     [HttpGet("CityList")]
     public IActionResult GetCityList()
     {
@@ -79,7 +80,7 @@ public class SchoolController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
-
+    [AllowAnonymous]
     [HttpGet("schools-in-city/{city}")]
     public IActionResult GetSchoolsInCity(string city)
     {

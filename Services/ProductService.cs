@@ -226,7 +226,7 @@ namespace SnackUpAPI.Services
         LEFT JOIN Categories c ON cp.CategoryID = c.CategoryID
         LEFT JOIN Inventory i ON p.ProductID = i.ProductID
         WHERE p.Deleted IS NULL
-          AND c.CategoryName = @Category AND cp.Deleted is null";
+          AND c.CategoryName = @Category AND cp.Deleted is null AND C.Deleted is null";
 
             return _databaseService.Query<object>(query, new { Category = category });
         }
@@ -234,41 +234,44 @@ namespace SnackUpAPI.Services
 
         public IEnumerable<object> GetPreferredProducts(int userId)
         {
-            var query = @"
-    WITH ProductPurchaseSummary AS (
-        SELECT 
-            od.ProductID,
-            SUM(od.Quantity) AS TotalQuantity
-        FROM 
-            Orders o
-            INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
-        WHERE 
-            o.UserID = @UserID
-        GROUP BY 
-            od.ProductID
-    )
+            var query = @"  WITH ProductPurchaseSummary AS (
     SELECT 
-        TOP 5 
-        p.ProductID,
-        p.ProductName,
-        p.Description,
-        p.PhotoLinkProdotto,
-        p.Price,
-        i.QuantityAvailable,
-        i.ReorderLevel,
-        CASE 
-            WHEN i.QuantityAvailable <= i.ReorderLevel THEN 1
-            ELSE 0
-        END AS IsLowStock,
-        ps.TotalQuantity
+        od.ProductID,
+        SUM(od.Quantity) AS TotalQuantity
     FROM 
-        ProductPurchaseSummary ps
-        INNER JOIN Products p ON ps.ProductID = p.ProductID
-        LEFT JOIN Inventory i ON p.ProductID = i.ProductID
+        Orders o
+        INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
     WHERE 
-        p.Deleted IS NULL
-    ORDER BY 
-        ps.TotalQuantity DESC;";
+        o.UserID = @UserID
+    GROUP BY 
+        od.ProductID
+)
+SELECT TOP 5 
+    p.ProductID,
+    p.ProductName,
+    p.Description,
+    p.PhotoLinkProdotto,
+    p.Price,
+    i.QuantityAvailable,
+    i.ReorderLevel,
+    CASE 
+        WHEN i.QuantityAvailable <= i.ReorderLevel THEN 1
+        ELSE 0
+    END AS IsLowStock,
+    ps.TotalQuantity
+FROM 
+    ProductPurchaseSummary ps
+    INNER JOIN Products p ON ps.ProductID = p.ProductID
+    LEFT JOIN Inventory i ON p.ProductID = i.ProductID
+WHERE 
+    p.Deleted IS NULL
+    AND EXISTS (
+        SELECT 1 
+        FROM CategoryProducts cp 
+        WHERE cp.ProductID = p.ProductID AND cp.Deleted IS NULL
+    )
+ORDER BY 
+    ps.TotalQuantity DESC;";
 
 
             return _databaseService.Query<object>(query, new { UserID = userId });

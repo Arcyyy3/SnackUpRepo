@@ -54,6 +54,7 @@ public class SchoolClassController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [AllowAnonymous]
 
     [HttpGet("register/{schoolId}/{classYear}/{classSection}")]
     public IActionResult GetSchoolClassIDByParameters(int schoolId, int classYear, string classSection)
@@ -69,6 +70,7 @@ public class SchoolClassController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [AllowAnonymous]
 
     [HttpGet("{schoolId},{classYear}")]
     public IActionResult GetClassSectionsByParameters(int schoolId, int classYear)

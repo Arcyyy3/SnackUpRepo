@@ -89,6 +89,7 @@ public class WalletController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+    [AllowAnonymous]
     [HttpPost("{userId}/create-wallet")]
     public IActionResult CreateWallet(int userId)
     {
