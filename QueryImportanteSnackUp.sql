@@ -894,7 +894,7 @@ ORDER BY
     ps.TotalQuantity DESC;
 
 
-
+    select * from Products
 
 
 

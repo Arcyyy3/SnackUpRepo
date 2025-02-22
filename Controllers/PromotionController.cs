@@ -51,7 +51,27 @@ public class PromotionController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [HttpGet("GetActivePromotionsMenu")]
+    public IActionResult GetActivePromotionsMenu()
+    {
+        try
+        {
+            var promotions = _promotionService.GetActivePromotionsMenu();
 
+            if (promotions == null ||
+                (!promotions.BundlePromotionsMenu.Any() && !promotions.RegularPromotionsMenu.Any()))
+            {
+                return NotFound(new { message = "No active promotions found." }); // HTTP 404
+            }
+
+            return Ok(promotions); // HTTP 200
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching promotions: {ex.Message}");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
     [HttpPost]
     public IActionResult AddPromotion([FromBody] PromotionForProductRequest request)
     {

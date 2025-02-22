@@ -60,6 +60,48 @@ namespace SnackUpAPI.Services
 
             return result;
         }
+        public ActivePromotionsDTOMenu GetActivePromotionsMenu()
+        {
+            var result = new ActivePromotionsDTOMenu();
+
+            // Recupera le promozioni attive per i prodotti BUNDLE
+            result.BundlePromotionsMenu = _databaseService.Query<PromotionActiveMenu>(
+                @"SELECT 
+          PR.ProductName,
+          P.DiscountPercentage,
+          PR.Price,
+          PR.PhotoLinkProdotto,
+          PR.Description,
+          PR.Details 
+          FROM Promotions P
+          INNER JOIN ProductPromotions PP ON P.PromotionID = PP.PromotionID
+          INNER JOIN Products PR ON PP.ProductID = PR.ProductID
+          WHERE PR.BundleID IS NOT NULL
+          AND P.StartDate <= GETDATE() 
+          AND P.EndDate >= GETDATE() 
+          AND P.Deleted IS NULL"
+            ).ToList();
+
+            // Recupera le promozioni attive per i prodotti REGOLARI
+            result.RegularPromotionsMenu = _databaseService.Query<PromotionActiveMenu>(
+                @"SELECT 
+          PR.ProductName,
+          P.DiscountPercentage,
+          PR.Price,
+          PR.PhotoLinkProdotto,
+          PR.Description,
+          PR.Details 
+          FROM Promotions P
+          INNER JOIN ProductPromotions PP ON P.PromotionID = PP.PromotionID
+          INNER JOIN Products PR ON PP.ProductID = PR.ProductID
+          WHERE PR.BundleID IS NULL
+          AND P.StartDate <= GETDATE() 
+          AND P.EndDate >= GETDATE() 
+          AND P.Deleted IS NULL"
+            ).ToList();
+
+            return result;
+        }
         public void AddPromotionForProductsByName(PromotionForProductRequest request)
         {
             // Verifica che la lista dei prodotti non sia vuota
@@ -196,6 +238,20 @@ namespace SnackUpAPI.Services
             public List<PromotionActive> BundlePromotions { get; set; } = new List<PromotionActive>();
             public List<PromotionActive> RegularPromotions { get; set; } = new List<PromotionActive>();
         }
+        public class PromotionActiveMenu
+        {
+            public string ProductName { get; set; }
+            public int DiscountPercentage { get; set; }
+            public double Price { get; set; }
+            public string PhotoLinkProdotto { get; set; }
+            public string Description { get; set; }
+            public string Details { get; set; }
 
+        }
+        public class ActivePromotionsDTOMenu
+        {
+            public List<PromotionActiveMenu> BundlePromotionsMenu { get; set; } = new List<PromotionActiveMenu>();
+            public List<PromotionActiveMenu> RegularPromotionsMenu { get; set; } = new List<PromotionActiveMenu>();
+        }
     }
 }
