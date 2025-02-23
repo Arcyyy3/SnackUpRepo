@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SnackUpAPI.Data;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -193,15 +194,35 @@ else
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowSpecificOrigins");
-// **Forza la configurazione dei file statici**
-var staticFilesOptions = new StaticFileOptions
-{
-    ServeUnknownFileTypes = true, // Serve anche file non standard
-    DefaultContentType = "text/html"
-};
+app.MapControllers(); // ✅ Serve le API correttamente
 
-app.UseStaticFiles(staticFilesOptions); app.MapControllers();
+app.UseCors("AllowSpecificOrigins");
+// ✅ FORZA IL PERCORSO GIUSTO DELLA CARTELLA `wwwroot`
+var projectRootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+var webRootPath = Path.Combine(projectRootPath, "wwwroot");
+
+// ✅ LOG: Controlliamo dove sta cercando `wwwroot`
+Console.WriteLine($"📂 Directory progetto: {projectRootPath}");
+Console.WriteLine($"📂 Percorso atteso per wwwroot: {webRootPath}");
+
+// ✅ Se la cartella `wwwroot` non esiste, la creiamo nel posto giusto
+if (!Directory.Exists(webRootPath))
+{
+    Console.WriteLine($"❌ ERRORE: La cartella wwwroot NON esiste! La creo ora...");
+    Directory.CreateDirectory(webRootPath);
+    Console.WriteLine($"📂 Cartella wwwroot creata in: {webRootPath}");
+}
+else
+{
+    Console.WriteLine($"✅ La cartella wwwroot esiste in: {webRootPath}");
+}
+
+// ✅ CONFIGURA ASP.NET PER USARE `wwwroot` DAL POSTO GIUSTO
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(webRootPath),
+    RequestPath = ""
+});
 
 // Endpoint di test
 app.MapGet("/", () => Results.Json(new { Message = "Welcome to SnackUp API" }));

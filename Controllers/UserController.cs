@@ -21,6 +21,10 @@ public class UserController : ControllerBase
         _tokenService = tokenService;
         _refreshTokenService = refreshTokenService;
     }
+
+
+
+
     [HttpGet("GetUserName/{userID}")]
     public IActionResult GetUserName(int userID)
     {
@@ -357,7 +361,7 @@ public class UserController : ControllerBase
             _userService.VerifyUser(user.Email);
 
             // 🔹 Serve la pagina HTML invece di restituire JSON
-            return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EmailVerified.html"), "text/html");
+            return RedirectPreserveMethod("/EmailVerified.html");
         }
         catch (Exception ex)
         {

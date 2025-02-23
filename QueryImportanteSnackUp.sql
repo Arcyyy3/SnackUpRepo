@@ -401,7 +401,7 @@ VALUES
 ('Giulia', 'Gialli', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552281022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 2, GETDATE(), NULL, NULL),
 ('Paolo', 'Neri', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'paolo',0,'sdawdsawd', 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
 ('Martina', 'Blu', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '3755281022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
-('Producer', 'Producer', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'Producer',0,'sdawdsawd', 'Producer', GETDATE(), 3, GETDATE(), NULL, NULL);
+('Producer', 'Producer', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'Producer',1,'sdawdsawd', 'Producer', GETDATE(), 3, GETDATE(), NULL, NULL);
 
 INSERT INTO Promotions (PromotionName, Description, DiscountPercentage, StartDate, EndDate, Created, Modified, Deleted)
 VALUES
@@ -896,9 +896,12 @@ ORDER BY
 
     select * from Users
 update Users 
-set Verified = 0 
-where UserName = 'pietro'
-
+set Verified = 1 
+where UserName = 'producer'
+SELECT DISTINCT Address FROM Schools WHERE Deleted IS NULL
 update Users 
-set Email = 'Deleted'
-where UserName = 'pietro'
+set Email = 'Deleted1'
+where UserName = 'a'
+update Users 
+set UserName = 'a'
+where Verified = '1'
