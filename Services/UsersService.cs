@@ -42,10 +42,10 @@ namespace SnackUpAPI.Services
             var passwordService = new PasswordService();
             string hashedPassword = passwordService.HashPassword(user.Password);
 
-            // Genera un token di verifica (un GUID univoco)
+            // Genera un token di verifica univoco (GUID)
             string verificationToken = Guid.NewGuid().ToString();
 
-            // Inserisci l'utente nel database con `Verified = 0`
+            // Inserisci l'utente nel database con `Verified = 0` e salva il token
             _databaseService.Execute(
                 @"INSERT INTO Users 
           (UserName, Surname, Password, Email, Verified, VerificationToken, Role, RegistrationDate, SchoolClassID, Created, Modified, Deleted) 
@@ -56,7 +56,7 @@ namespace SnackUpAPI.Services
                     user.Surname,
                     Password = hashedPassword,
                     user.Email,
-                    VerificationToken = verificationToken,
+                    VerificationToken = verificationToken, // Salviamo il token nel DB
                     user.Role,
                     user.RegistrationDate,
                     user.SchoolClassID,
@@ -64,8 +64,8 @@ namespace SnackUpAPI.Services
                 }
             );
 
-            // Costruisci il link di verifica
-            string verificationLink = $"https://snackupitalia.com/api/Users/VerifyEmail?token={verificationToken}";
+            // Costruisci il link di verifica con il token
+            string verificationLink = $"https://192.168.249.188:5001/api/Users/VerifyEmail?token={verificationToken}";
 
             // Invia l'email di verifica con AWS SES
             AmazonSESHelper.SendEmailAsync(user.Email, "Conferma la tua registrazione",
@@ -118,6 +118,7 @@ namespace SnackUpAPI.Services
                 new { Token = token }
             );
         }
+
 
         public User AuthenticateUser(string email, string password)
         {

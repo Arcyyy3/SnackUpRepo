@@ -351,19 +351,21 @@ public class UserController : ControllerBase
             var user = _userService.GetUserByVerificationToken(token);
             if (user == null)
             {
-                return BadRequest("Token di verifica non valido o utente inesistente.");
+                return BadRequest("Token di verifica non valido o scaduto.");
             }
 
-            // Verifica l'utente impostando Verified = 1
             _userService.VerifyUser(user.Email);
 
-            return Ok("Email verificata con successo! Ora puoi effettuare il login.");
+            // 🔹 Serve la pagina HTML invece di restituire JSON
+            return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EmailVerified.html"), "text/html");
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"Errore interno del server: {ex.Message}");
         }
     }
+
+
 
 
 

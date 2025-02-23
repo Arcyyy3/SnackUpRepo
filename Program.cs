@@ -194,8 +194,14 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowSpecificOrigins");
-app.UseStaticFiles(); // Serve i file statici da wwwroot
-app.MapControllers();
+// **Forza la configurazione dei file statici**
+var staticFilesOptions = new StaticFileOptions
+{
+    ServeUnknownFileTypes = true, // Serve anche file non standard
+    DefaultContentType = "text/html"
+};
+
+app.UseStaticFiles(staticFilesOptions); app.MapControllers();
 
 // Endpoint di test
 app.MapGet("/", () => Results.Json(new { Message = "Welcome to SnackUp API" }));

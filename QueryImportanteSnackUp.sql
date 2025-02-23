@@ -8,6 +8,7 @@ CREATE TABLE Users (
     Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Verified int NOT NULL,
+    VerificationToken VARCHAR(500) NOT NULL,
     Role VARCHAR(50) NOT NULL,
     RegistrationDate DATETIME NOT NULL DEFAULT GETDATE(),
     SchoolClassID INT NULL,
@@ -388,19 +389,19 @@ VALUES
 (1, 5, 'N', GETDATE(), NULL, NULL);
 
 
-INSERT INTO [Users] (UserName, Surname, Password, Email,Verified, Role, RegistrationDate, SchoolClassID, Created, Modified, Deleted)
+INSERT INTO [Users] (UserName, Surname, Password, Email,Verified,VerificationToken, Role, RegistrationDate, SchoolClassID, Created, Modified, Deleted)
 VALUES
-('Admin', 'Admin', '$2a$11$.QsyJMGqIQ3fl1n7Km17teYqzJH/f0rtwq1v2p3cBRihw6MK5/gIS', 'Admin',0, 'Admin', GETDATE(), 1, GETDATE(), NULL, NULL),
-('Alice', 'Rossi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552810',0, 'Student', GETDATE(), 1, GETDATE(), NULL, NULL),
-('Luca', 'Bianchi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '375352810222',0, 'Student', GETDATE(), 1, GETDATE(), NULL, NULL),
-('Marco', 'Neri', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '375528150222',0, 'Teacher', GETDATE(), NULL, GETDATE(), NULL, NULL),
-('Alice', 'Rossi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552821022',0, 'MasterStudent', GETDATE(), 1, GETDATE(), NULL, NULL),
-('Luca', 'Bianchi', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37551281022',0, 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
-('Marco', 'Verdi', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552815022',0, 'MasterStudent', GETDATE(), 2, GETDATE(), NULL, NULL),
-('Giulia', 'Gialli', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552281022',0, 'MasterStudent', GETDATE(), 2, GETDATE(), NULL, NULL),
-('Paolo', 'Neri', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'paolo',0, 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
-('Martina', 'Blu', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '3755281022',0, 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
-('Producer', 'Producer', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'Producer',0, 'Producer', GETDATE(), 3, GETDATE(), NULL, NULL);
+('Admin', 'Admin', '$2a$11$.QsyJMGqIQ3fl1n7Km17teYqzJH/f0rtwq1v2p3cBRihw6MK5/gIS', 'Admin',0,'sdawdsawd', 'Admin', GETDATE(), 1, GETDATE(), NULL, NULL),
+('Alice', 'Rossi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552810',0,'sdawdsawd', 'Student', GETDATE(), 1, GETDATE(), NULL, NULL),
+('Luca', 'Bianchi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '375352810222',0,'sdawdsawd', 'Student', GETDATE(), 1, GETDATE(), NULL, NULL),
+('Marco', 'Neri', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '375528150222',0,'sdawdsawd', 'Teacher', GETDATE(), NULL, GETDATE(), NULL, NULL),
+('Alice', 'Rossi','$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552821022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 1, GETDATE(), NULL, NULL),
+('Luca', 'Bianchi', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37551281022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
+('Marco', 'Verdi', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552815022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 2, GETDATE(), NULL, NULL),
+('Giulia', 'Gialli', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '37552281022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 2, GETDATE(), NULL, NULL),
+('Paolo', 'Neri', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'paolo',0,'sdawdsawd', 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
+('Martina', 'Blu', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', '3755281022',0,'sdawdsawd', 'MasterStudent', GETDATE(), 3, GETDATE(), NULL, NULL),
+('Producer', 'Producer', '$2a$11$TxAb9qp0YmMgve2sEvg9sev60mbawCVYYlTeskG4/AY036rE/WW/a', 'Producer',0,'sdawdsawd', 'Producer', GETDATE(), 3, GETDATE(), NULL, NULL);
 
 INSERT INTO Promotions (PromotionName, Description, DiscountPercentage, StartDate, EndDate, Created, Modified, Deleted)
 VALUES
@@ -757,7 +758,7 @@ VALUES
 (1, 11, GETDATE(), NULL, NULL); -- 50.00 è l'importo iniziale assegnato
 
 #####################################################################################################
-
+select * from Users
 UPDATE OrderTrackings
 SET RetrievedCode1 = 0
 WHERE SchoolClassID =3;
@@ -893,8 +894,11 @@ WHERE
 ORDER BY 
     ps.TotalQuantity DESC;
 
+    select * from Users
+update Users 
+set Verified = 0 
+where UserName = 'pietro'
 
-    select * from Products
-
-
-
+update Users 
+set Email = 'Deleted'
+where UserName = 'pietro'
