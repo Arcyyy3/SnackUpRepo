@@ -169,7 +169,7 @@ namespace SnackUpAPI.Services
         public int? GetUserIdByEmail(string email)
         {
             var user = _databaseService.QuerySingle<User>(
-                "SELECT USerID FROM Users WHERE Email = @Email AND Deleted IS NULL",
+                "SELECT UserID FROM Users WHERE Email = @Email AND Deleted IS NULL",
                 new { Email = email }
             );
 
