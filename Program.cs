@@ -174,6 +174,8 @@ builder.Services.AddScoped<TokenService>(provider =>
     return new TokenService(jwtSecretKey, tokenExpiryInMinutes);
 });
 
+builder.Services.AddDbContext<DbSnackUpProjectContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // **Applicazione**
 var app = builder.Build();
