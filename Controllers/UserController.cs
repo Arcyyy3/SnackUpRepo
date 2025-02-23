@@ -342,6 +342,29 @@ public class UserController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    [HttpGet("VerifyEmail")]
+    [AllowAnonymous]
+    public IActionResult VerifyEmail([FromQuery] string token)
+    {
+        try
+        {
+            var user = _userService.GetUserByVerificationToken(token);
+            if (user == null)
+            {
+                return BadRequest("Token di verifica non valido o utente inesistente.");
+            }
+
+            // Verifica l'utente impostando Verified = 1
+            _userService.VerifyUser(user.Email);
+
+            return Ok("Email verificata con successo! Ora puoi effettuare il login.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Errore interno del server: {ex.Message}");
+        }
+    }
+
 
 
     public class NomeCompleto()

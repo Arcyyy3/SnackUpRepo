@@ -27,7 +27,7 @@ namespace SnackUpAPI.Services
                 new { UserID = userID }
             );
         }
-
+  
 
         public User GetUserById(int id)
         {
@@ -39,40 +39,39 @@ namespace SnackUpAPI.Services
 
         public void AddUser(User user)
         {
-            Console.WriteLine($"PASSWORD::{user.Password}");
-
-            // Istanzia il servizio per l'hashing della password
             var passwordService = new PasswordService();
-
-            // Hash della password
             string hashedPassword = passwordService.HashPassword(user.Password);
 
-            // Inserisci l'utente nel database con la password hashata
+            // Genera un token di verifica (un GUID univoco)
+            string verificationToken = Guid.NewGuid().ToString();
+
+            // Inserisci l'utente nel database con `Verified = 0`
             _databaseService.Execute(
                 @"INSERT INTO Users 
-          (UserName, Surname, Password, Email, Role, RegistrationDate, SchoolClassID, Created, Modified, Deleted) 
-          VALUES (@UserName, @Surname, @Password, @Email, @Role, @RegistrationDate, @SchoolClassID, @Created, NULL, NULL)",
+          (UserName, Surname, Password, Email, Verified, VerificationToken, Role, RegistrationDate, SchoolClassID, Created, Modified, Deleted) 
+          VALUES (@UserName, @Surname, @Password, @Email, 0, @VerificationToken, @Role, @RegistrationDate, @SchoolClassID, @Created, NULL, NULL)",
                 new
                 {
                     user.UserName,
                     user.Surname,
-                    Password = hashedPassword, // Usa la password hashata
+                    Password = hashedPassword,
                     user.Email,
+                    VerificationToken = verificationToken,
                     user.Role,
                     user.RegistrationDate,
                     user.SchoolClassID,
-                    Created = DateTime.UtcNow // Imposta Created come la data e ora correnti
+                    Created = DateTime.UtcNow
                 }
             );
-            var passwordService1 = new PasswordService();
-            string plainPassword = "password123";
-            string hash = passwordService.HashPassword(plainPassword);
 
-            Console.WriteLine($"Password: {plainPassword}");
-            Console.WriteLine($"Hash: {hash}");
-            Console.WriteLine($"Verifica corretta: {passwordService1.VerifyPassword(plainPassword, hash)}");
-            Console.WriteLine($"Verifica errata: {passwordService1.VerifyPassword("wrongPassword", hash)}");
+            // Costruisci il link di verifica
+            string verificationLink = $"https://snackupitalia.com/api/Users/VerifyEmail?token={verificationToken}";
 
+            // Invia l'email di verifica con AWS SES
+            AmazonSESHelper.SendEmailAsync(user.Email, "Conferma la tua registrazione",
+                $"Ciao {user.UserName},\n\nConferma la tua registrazione cliccando su questo link: {verificationLink}\n\nGrazie!");
+
+            Console.WriteLine($"✅ Email di verifica inviata a {user.Email}");
         }
 
 
@@ -112,6 +111,13 @@ namespace SnackUpAPI.Services
                 }
             );
         }
+        public User GetUserByVerificationToken(string token)
+        {
+            return _databaseService.QuerySingleOrDefault<User>(
+                "SELECT * FROM Users WHERE VerificationToken = @Token",
+                new { Token = token }
+            );
+        }
 
         public User AuthenticateUser(string email, string password)
         {
@@ -125,11 +131,17 @@ namespace SnackUpAPI.Services
                 return null; // Utente non trovato
             }
 
-            var passwordService = new PasswordService(); // Può anche essere iniettato
+            if (user.Verified == 0)
+            {
+                throw new UnauthorizedAccessException("Email non verificata. Controlla la tua casella di posta.");
+            }
+
+            var passwordService = new PasswordService();
             bool isPasswordValid = passwordService.VerifyPassword(password, user.Password);
 
             return isPasswordValid ? user : null;
         }
+
         public string GetUserName(int userID)
         {
             string query = @"
@@ -291,6 +303,15 @@ namespace SnackUpAPI.Services
                     Modified = DateTime.UtcNow,
                     UserID = id
                 }
+            );
+        }
+        public void VerifyUser(string email)
+        {
+            _databaseService.Execute(
+                @"UPDATE Users 
+          SET Verified = 1 
+          WHERE Email = @Email",
+                new { Email = email }
             );
         }
 

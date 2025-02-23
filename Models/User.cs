@@ -22,7 +22,8 @@ public class User
     [Required]
     [MaxLength(255)]
     public string Email { get; set; }
-
+ 
+    public int Verified { get; set; }
     [Required]
     [MaxLength(50)]
     public string Role { get; set; }
