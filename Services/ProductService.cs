@@ -402,9 +402,6 @@ ORDER BY
         public ProductPageData GetProductPageData(int ProductID)
         {
             string query = @"
-
-
-
 	SELECT 
     p.ProductID,
     pr.ProducerName AS ProducerName,
@@ -421,13 +418,13 @@ ORDER BY
         SELECT STRING_AGG(c.CategoryName, ', ') 
         FROM CategoryProducts cp
         INNER JOIN Categories c ON cp.CategoryID = c.CategoryID
-        WHERE cp.ProductID = p.ProductID AND c.Deleted IS NULL
+        WHERE cp.ProductID = p.ProductID AND cp.Deleted IS NULL AND c.Deleted IS NULL
     ) AS Categories,
     (
         SELECT STRING_AGG(a.AllergenName, ', ') 
         FROM ProductAllergens pa
         INNER JOIN Allergens a ON pa.AllergenID = a.AllergenID
-        WHERE pa.ProductID = p.ProductID AND a.Deleted IS NULL
+        WHERE pa.ProductID = p.ProductID AND a.Deleted IS NULL AND pa.Deleted IS NULL
     ) AS Allergens,
     -- Calcolo del prezzo scontato
     CASE 
@@ -461,7 +458,6 @@ LEFT JOIN
 WHERE 
     p.ProductID = @ProductID -- Sostituisci con il ProductID desiderato
     AND p.Deleted IS NULL;
-
 ";
 
             var productPageData = _databaseService.QuerySingleOrDefault<ProductPageData>(query, new { ProductID = ProductID });
@@ -504,7 +500,7 @@ WHERE
                 @"SELECT c.CategoryName 
           FROM CategoryProducts cp
           JOIN Categories c ON cp.CategoryID = c.CategoryID
-          WHERE cp.ProductID = @ProductID AND c.Deleted IS NULL",
+          WHERE cp.ProductID = @ProductID AND c.Deleted IS NULL AND cp.Deleted IS NULL",
                 new { ProductID = productId }
             ).ToList();
 
@@ -513,7 +509,7 @@ WHERE
                 @"SELECT a.AllergenName 
           FROM ProductAllergens pa
           JOIN Allergens a ON pa.AllergenID = a.AllergenID
-          WHERE pa.ProductID = @ProductID AND a.Deleted IS NULL",
+          WHERE pa.ProductID = @ProductID AND a.Deleted IS NULL AND pa.Deleted IS NULL",
                 new { ProductID = productId }
             ).ToList();
 
@@ -565,13 +561,13 @@ WHERE
             );
         }
         public void UpdateProductDetailsAndAssociations(
-    int productID,
-    List<string> newCategories,
-    List<string> newAllergens,
-    string newDescription,
-    string newDetails)
+       int productID,
+       List<string> newCategories,
+       List<string> newAllergens,
+       string newDescription,
+       string newDetails)
         {
-            // Step A: Aggiorna descrizione e dettagli
+            // Step A: Aggiorna descrizione e dettagli del prodotto
             _databaseService.Execute(
                 @"UPDATE Products
           SET Description = @Description,
@@ -579,97 +575,174 @@ WHERE
               Modified = GETUTCDATE()
           WHERE ProductID = @ProductID
             AND Deleted IS NULL",
-                new
+                new { Description = newDescription, Details = newDetails, ProductID = productID }
+            );
+
+            // ---------------------------
+            // Gestione delle Categorie
+            // ---------------------------
+            // Recupera le associazioni correnti attive per il prodotto
+            var currentCategories = _databaseService.Query<CategoryAssociation>(
+                @"SELECT cp.CategoryID, c.CategoryName
+          FROM CategoryProducts cp
+          INNER JOIN Categories c ON cp.CategoryID = c.CategoryID
+          WHERE cp.ProductID = @ProductID
+            AND cp.Deleted IS NULL
+            AND c.Deleted IS NULL",
+                new { ProductID = productID }
+            );
+
+            // Creiamo un set dei nomi di categoria attualmente associati (case insensitive)
+            var currentCategoryNames = currentCategories
+                                        .Select(x => x.CategoryName)
+                                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            // Soft-delete delle associazioni che non sono più presenti nella nuova lista
+            foreach (var assoc in currentCategories)
+            {
+                if (newCategories == null || !newCategories.Contains(assoc.CategoryName, StringComparer.OrdinalIgnoreCase))
                 {
-                    Description = newDescription,
-                    Details = newDetails,
-                    ProductID = productID
+                    _databaseService.Execute(
+                        @"UPDATE CategoryProducts
+                  SET Deleted = GETUTCDATE()
+                  WHERE ProductID = @ProductID
+                    AND CategoryID = @CategoryID
+                    AND Deleted IS NULL",
+                        new { ProductID = productID, CategoryID = assoc.CategoryID }
+                    );
                 }
-            );
+            }
 
-            // Step B: “Elimina” (soft-delete) le categorie attuali del prodotto
-            _databaseService.Execute(
-                @"UPDATE CategoryProducts
-          SET Deleted = GETUTCDATE()
-          WHERE ProductID = @ProductID
-            AND Deleted IS NULL",
-                new { ProductID = productID }
-            );
-
-            // Step C: “Elimina” (soft-delete) gli allergeni attuali del prodotto
-            _databaseService.Execute(
-                @"UPDATE ProductAllergens
-          SET Deleted = GETUTCDATE()
-          WHERE ProductID = @ProductID
-            AND Deleted IS NULL",
-                new { ProductID = productID }
-            );
-
-            // Step D: Inserisci le nuove categorie
+            // Aggiunge le nuove associazioni mancanti
             if (newCategories != null)
             {
                 foreach (var categoryName in newCategories)
                 {
-                    // Recupera l’ID della categoria (o la crei se non esiste)
-                    var categoryID = _databaseService.QuerySingleOrDefault<int?>(
-                        @"SELECT CategoryID FROM Categories
-                  WHERE CategoryName = @CategoryName
-                    AND Deleted IS NULL",
-                        new { CategoryName = categoryName }
-                    );
-
-                    if (!categoryID.HasValue)
+                    if (!currentCategoryNames.Contains(categoryName))
                     {
-                        // Se la categoria non esiste, la creiamo:
-                        categoryID = _databaseService.QuerySingle<int>(
-                        @"INSERT INTO Categories(CategoryName, Created) 
-                          VALUES(@CategoryName, GETUTCDATE());
+                        // Recupera l’ID della categoria (o la crea se non esiste)
+                        var categoryID = _databaseService.QuerySingleOrDefault<int?>(
+                            @"SELECT CategoryID FROM Categories
+                      WHERE CategoryName = @CategoryName
+                        AND Deleted IS NULL",
+                            new { CategoryName = categoryName }
+                        );
+
+                        if (!categoryID.HasValue)
+                        {
+                            categoryID = _databaseService.QuerySingle<int>(
+                                @"INSERT INTO Categories(CategoryName, Description, Created) 
+                          VALUES(@CategoryName, @CategoryName, GETUTCDATE());
                           SELECT CAST(SCOPE_IDENTITY() AS int);",
-                        new { CategoryName = categoryName }
-                          );
+                                new { CategoryName = categoryName }
+                            );
+                        }
 
+                        // Inserisce la nuova associazione in CategoryProducts
+                        _databaseService.Execute(
+                            @"INSERT INTO CategoryProducts(ProductID, CategoryID, Created)
+                      VALUES(@ProductID, @CategoryID, GETUTCDATE())",
+                            new { ProductID = productID, CategoryID = categoryID.Value }
+                        );
                     }
+                }
+            }
 
-                    // Aggiungi record in CategoryProducts
+            // ---------------------------
+            // Gestione degli Allergeni
+            // ---------------------------
+            var currentAllergens = _databaseService.Query<AllergenAssociation>(
+                @"SELECT pa.AllergenID, a.AllergenName
+      FROM ProductAllergens pa
+      INNER JOIN Allergens a ON pa.AllergenID = a.AllergenID
+      WHERE pa.ProductID = @ProductID
+        AND pa.Deleted IS NULL
+        AND a.Deleted IS NULL",
+                new { ProductID = productID }
+            );
+
+            // Creiamo un set dei nomi di allergene attualmente associati (active)
+            var currentAllergenNames = currentAllergens
+                                        .Select(x => x.AllergenName)
+                                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            // Soft-delete delle associazioni di allergeni non presenti nella nuova lista
+            foreach (var assoc in currentAllergens)
+            {
+                if (newAllergens == null || !newAllergens.Contains(assoc.AllergenName, StringComparer.OrdinalIgnoreCase))
+                {
                     _databaseService.Execute(
-                        @"INSERT INTO CategoryProducts(ProductID, CategoryID, Created)
-                  VALUES(@ProductID, @CategoryID, GETUTCDATE())",
-                        new { ProductID = productID, CategoryID = categoryID.Value }
+                        @"UPDATE ProductAllergens
+              SET Deleted = GETUTCDATE()
+              WHERE ProductID = @ProductID
+                AND AllergenID = @AllergenID
+                AND Deleted IS NULL",
+                        new { ProductID = productID, AllergenID = assoc.AllergenID }
                     );
                 }
             }
 
-            // Inserisci i nuovi allergeni
+            // Aggiunge le nuove associazioni mancanti
             if (newAllergens != null)
             {
                 foreach (var allergenName in newAllergens)
                 {
-                    // Recupera l’ID dell’allergene (o lo crei se non esiste)
-                    var allergenID = _databaseService.QuerySingleOrDefault<int?>(
-                        @"SELECT AllergenID FROM Allergens
+                    // Se il nome non è tra quelli attivi
+                    if (!currentAllergenNames.Contains(allergenName))
+                    {
+                        // Recupera l’ID dell’allergene (o lo crea se non esiste)
+                        var allergenID = _databaseService.QuerySingleOrDefault<int?>(
+                            @"SELECT AllergenID FROM Allergens
                   WHERE AllergenName = @AllergenName
                     AND Deleted IS NULL",
-                        new { AllergenName = allergenName }
-                    );
-
-                    allergenID = _databaseService.QuerySingle<int>(
-                     @"INSERT INTO Allergens(AllergenName, Created) 
-                      VALUES(@AllergenName, GETUTCDATE());
+                            new { AllergenName = allergenName }
+                        );
+                        if (!allergenID.HasValue)
+                        {
+                            allergenID = _databaseService.QuerySingle<int>(
+                                @"INSERT INTO Allergens(AllergenName, Description, Created) 
+                      VALUES(@AllergenName, @AllergenName, GETUTCDATE());
                       SELECT CAST(SCOPE_IDENTITY() AS int);",
-                     new { AllergenName = allergenName }
-                       );
+                                new { AllergenName = allergenName }
+                            );
+                        }
 
-
-                    // Aggiungi record in ProductAllergens
-                    _databaseService.Execute(
-                        @"INSERT INTO ProductAllergens(ProductID, AllergenID, Created)
-                  VALUES(@ProductID, @AllergenID, GETUTCDATE())",
-                        new { ProductID = productID, AllergenID = allergenID.Value }
-                    );
+                        // Verifica se esiste già un'associazione per questo prodotto e allergene,
+                        // anche se soft-deleted
+                        var existingAssociationID = _databaseService.QuerySingleOrDefault<int?>(
+                            @"SELECT ProductAllergenID
+                  FROM ProductAllergens
+                  WHERE ProductID = @ProductID
+                    AND AllergenID = @AllergenID",
+                            new { ProductID = productID, AllergenID = allergenID.Value }
+                        );
+                        if (existingAssociationID.HasValue)
+                        {
+                            // Riattiva l'associazione soft-deleted
+                            _databaseService.Execute(
+                                @"UPDATE ProductAllergens
+                      SET Deleted = NULL, Modified = GETUTCDATE()
+                      WHERE ProductAllergenID = @ProductAllergenID",
+                                new { ProductAllergenID = existingAssociationID.Value }
+                            );
+                        }
+                        else
+                        {
+                            // Inserisce la nuova associazione
+                            _databaseService.Execute(
+                                @"INSERT INTO ProductAllergens(ProductID, AllergenID, Created)
+                      VALUES(@ProductID, @AllergenID, GETUTCDATE())",
+                                new { ProductID = productID, AllergenID = allergenID.Value }
+                            );
+                        }
+                    }
                 }
             }
         }
-        public void UpdateProductStock(int productID, int newQuantityAvailable)
+
+
+
+            public void UpdateProductStock(int productID, int newQuantityAvailable)
         {
             // Aggiorna la tabella Inventory
             // Se non esiste un record per questo prodotto, lo puoi creare
@@ -739,6 +812,18 @@ WHERE
         {
             public List<string> BundleProducts { get; set; } = new List<string>();
             public List<string> RegularProducts { get; set; } = new List<string>();
+        }
+        // Classi di supporto per mappare le associazioni correnti
+        private class CategoryAssociation
+        {
+            public int CategoryID { get; set; }
+            public string CategoryName { get; set; }
+        }
+
+        private class AllergenAssociation
+        {
+            public int AllergenID { get; set; }
+            public string AllergenName { get; set; }
         }
     }
 }

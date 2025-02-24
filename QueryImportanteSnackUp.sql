@@ -285,6 +285,7 @@ CREATE TABLE Allergens (
 
 -- Relazione molti-a-molti tra prodotti e allergeni
 CREATE TABLE ProductAllergens (
+    ProductAllergenID INT IDENTITY(1,1),
     ProductID INT NOT NULL,
     AllergenID INT NOT NULL,
     Created DATETIME DEFAULT GETUTCDATE(),
@@ -839,7 +840,7 @@ DROP TABLE IF EXISTS ProducerUsers;
 
 
 
-	select * from Orders
+	select * from Categories
 	select * from OrderDetails
 	select * from Wallets
 	select * from WalletTransactions
@@ -894,7 +895,7 @@ WHERE
 ORDER BY 
     ps.TotalQuantity DESC;
 
-    select * from Users
+    select * from CategoryProducts
 update Users 
 set Verified = 1 
 where UserName = 'producer'
@@ -905,3 +906,70 @@ where UserName = 'a'
 update Users 
 set UserName = 'a'
 where Verified = '1'
+
+INSERT INTO Categories(CategoryName, Description, Created) 
+                          VALUES('Prova','prova', GETUTCDATE());
+                          SELECT CAST(SCOPE_IDENTITY() AS int);
+    select * from ProductAllergens
+        select * from Allergens
+                select * from Allergens
+
+    SELECT CategoryID FROM Categories
+                  WHERE CategoryName = 'Salato'
+                    AND Deleted IS NULL
+	SELECT 
+    p.ProductID,
+    pr.ProducerName AS ProducerName,
+    p.ProductName AS ProductName,
+    ISNULL(i.QuantityAvailable, 0) AS QuantityAvailable,
+    p.Price AS OriginalPrice,
+    prom.DiscountPercentage,
+    p.Description,
+    p.Details,
+    p.Raccomandation,
+    p.PhotoLinkProdotto,
+    pr.PhotoLinkProduttore,
+    (
+        SELECT STRING_AGG(c.CategoryName, ', ') 
+        FROM CategoryProducts cp
+        INNER JOIN Categories c ON cp.CategoryID = c.CategoryID
+        WHERE cp.ProductID = p.ProductID AND cp.Deleted IS NULL AND c.Deleted IS NULL
+    ) AS Categories,
+    (
+        SELECT STRING_AGG(a.AllergenName, ', ') 
+        FROM ProductAllergens pa
+        INNER JOIN Allergens a ON pa.AllergenID = a.AllergenID
+        WHERE pa.ProductID = p.ProductID AND a.Deleted IS NULL AND pa.Deleted IS NULL
+    ) AS Allergens,
+    -- Calcolo del prezzo scontato
+    CASE 
+        WHEN prom.DiscountPercentage IS NOT NULL THEN 
+            ROUND(p.Price * (1 - prom.DiscountPercentage / 100.0), 2)
+        ELSE 
+            p.Price
+    END AS DiscountedPrice
+FROM 
+    Products p
+INNER JOIN 
+    Producers pr ON p.ProducerID = pr.ProducerID
+LEFT JOIN 
+    Inventory i ON p.ProductID = i.ProductID
+LEFT JOIN 
+    (
+        SELECT 
+            pp.ProductID,
+            MAX(prom.DiscountPercentage) AS DiscountPercentage -- Prendi la promozione con lo sconto maggiore
+        FROM 
+            ProductPromotions pp
+        INNER JOIN 
+            Promotions prom ON pp.PromotionID = prom.PromotionID 
+        WHERE 
+            prom.Deleted IS NULL
+            AND prom.StartDate <= GETDATE() 
+            AND (prom.EndDate IS NULL OR prom.EndDate >= GETDATE())
+        GROUP BY 
+            pp.ProductID
+    ) prom ON p.ProductID = prom.ProductID
+WHERE 
+    p.ProductID = 1 -- Sostituisci con il ProductID desiderato
+    AND p.Deleted IS NULL;

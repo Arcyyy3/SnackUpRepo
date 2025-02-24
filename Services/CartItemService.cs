@@ -45,7 +45,7 @@ namespace SnackUpAPI.Services
         ROUND(c.Quantity * (c.Price * (1 - COALESCE(ap.DiscountPercentage, 0) / 100.0)), 2) AS Total
     FROM CartItems c
     LEFT JOIN ActivePromotions ap ON c.ProductID = ap.ProductID
-    WHERE c.SessionID = @SessionID";
+    WHERE c.SessionID = @SessionID AND c.DeletedAt IS NULL";
 
             return _databaseService.Query<CartItem>(query, new { SessionID = sessionId });
         }
@@ -60,14 +60,14 @@ namespace SnackUpAPI.Services
         public IEnumerable<CartProduct> GetCartProduct(int userID)
         {
             return _databaseService.Query<CartProduct>(
-                "SELECT distinct  P.ProductName AS ProductName,  I.QuantityAvailable AS RemainingQuantity,  CASE  WHEN AP.PromotionID IS NOT NULL  THEN P.Price * (1 - (AP.DiscountPercentage / 100.0))   ELSE P.Price END AS DiscountedPrice FROM ShoppingSessions AS SS INNER JOIN CartItems AS CI   ON SS.SessionID = CI.SessionID INNER JOIN Products AS P ON CI.ProductID = P.ProductID INNER JOIN Inventory AS I ON P.ProductID = I.ProductID LEFT JOIN ( SELECT   PP.ProductID, PR.PromotionID, PR.DiscountPercentage FROM ProductPromotions AS PP  INNER JOIN Promotions AS PR ON PP.PromotionID = PR.PromotionID WHERE GETDATE() BETWEEN PR.StartDate AND PR.EndDate ) AS AP ON P.ProductID = AP.ProductID WHERE SS.UserID = @UserID;",
+                "SELECT distinct  P.ProductName AS ProductName,  I.QuantityAvailable AS RemainingQuantity,  CASE  WHEN AP.PromotionID IS NOT NULL  THEN P.Price * (1 - (AP.DiscountPercentage / 100.0))   ELSE P.Price END AS DiscountedPrice FROM ShoppingSessions AS SS INNER JOIN CartItems AS CI   ON SS.SessionID = CI.SessionID INNER JOIN Products AS P ON CI.ProductID = P.ProductID INNER JOIN Inventory AS I ON P.ProductID = I.ProductID LEFT JOIN ( SELECT   PP.ProductID, PR.PromotionID, PR.DiscountPercentage FROM ProductPromotions AS PP  INNER JOIN Promotions AS PR ON PP.PromotionID = PR.PromotionID WHERE GETDATE() BETWEEN PR.StartDate AND PR.EndDate AND PR.Deleted IS NULL ) AS AP ON P.ProductID = AP.ProductID WHERE SS.UserID = @UserID;",
                 new { UserID = userID }
             );
         }
         public double GetTotalPrice(int userID)
         {
             return _databaseService.QuerySingle<double>(
-                "DECLARE @TotalSum DECIMAL(10, 2); SELECT @TotalSum = SUM(CI.Total) FROM CartItems CI INNER JOIN ShoppingSessions SS ON CI.SessionID = SS.SessionID WHERE SS.UserID = 9 AND CI.DeletedAt IS NULL; UPDATE ShoppingSessions SET TotalAmount = @TotalSum WHERE UserID = 9; SELECT @TotalSum AS TotalSum;",
+                "DECLARE @TotalSum DECIMAL(10, 2); SELECT @TotalSum = SUM(CI.Total) FROM CartItems CI INNER JOIN ShoppingSessions SS ON CI.SessionID = SS.SessionID WHERE SS.UserID = 9 AND CI.DeletedAt IS NULL; UPDATE ShoppingSessions SET TotalAmount = @TotalSum WHERE UserID = @UserID; SELECT @TotalSum AS TotalSum;",
                 new { UserID = userID }
             );
         }
@@ -77,7 +77,7 @@ namespace SnackUpAPI.Services
             {
                 // Trova il ProductID dal nome del prodotto
                 var productId = _databaseService.QuerySingleOrDefault<int?>(
-                    "SELECT ProductID FROM Products WHERE ProductName = @ProductName",
+                    "SELECT ProductID FROM Products WHERE ProductName = @ProductName AND Deleted IS NULL",
                     new { ProductName = productName }
                 );
 
