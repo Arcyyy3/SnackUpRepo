@@ -1,376 +1,395 @@
 use [DB_SnackUpProject]
-
 -- Creazione della tabella Users
 CREATE TABLE Users (
-    UserID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
     UserName VARCHAR(100) NOT NULL,
     Surname VARCHAR(100) NOT NULL,
     Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
-    Verified int NOT NULL,
+    Verified INT NOT NULL,
     VerificationToken VARCHAR(500) NOT NULL,
     Role VARCHAR(50) NOT NULL,
-    RegistrationDate DATETIME NOT NULL DEFAULT GETDATE(),
+    RegistrationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     SchoolClassID INT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL
-	);
+) ENGINE=InnoDB;
+
 -- Creazione della tabella Schools
-	CREATE TABLE Schools (
-		SchoolID INT PRIMARY KEY IDENTITY(1,1),
-		SchoolName VARCHAR(255) NOT NULL,
-		Address VARCHAR(255) NOT NULL,
-		ProducerID INT NULL,
-		Created DATETIME NOT NULL DEFAULT GETDATE(),
-		Modified DATETIME NULL,
-		Deleted DATETIME NULL
-	);
-    
+CREATE TABLE Schools (
+    SchoolID INT PRIMARY KEY AUTO_INCREMENT,
+    SchoolName VARCHAR(255) NOT NULL,
+    Address VARCHAR(255) NOT NULL,
+    ProducerID INT NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL
+) ENGINE=InnoDB;
+
+-- Creazione della tabella SchoolClasses
 CREATE TABLE SchoolClasses (
-    SchoolClassID INT PRIMARY KEY IDENTITY(1,1),
+    SchoolClassID INT PRIMARY KEY AUTO_INCREMENT,
     SchoolID INT NOT NULL,
     ClassYear INT NOT NULL,
     ClassSection VARCHAR(10) NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_SchoolClasses_Schools FOREIGN KEY (SchoolID) REFERENCES Schools(SchoolID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE Users
 ADD CONSTRAINT FK_Users_SchoolClasses FOREIGN KEY (SchoolClassID) REFERENCES SchoolClasses(SchoolClassID) ON DELETE SET NULL;
 
 -- Creazione della tabella Producers
 CREATE TABLE Producers (
-    ProducerID INT PRIMARY KEY IDENTITY(1,1),
+    ProducerID INT PRIMARY KEY AUTO_INCREMENT,
     ProducerName VARCHAR(255) NOT NULL,
     Address VARCHAR(255),
     ContactInfo VARCHAR(255),
-	PhotoLinkProduttore VARCHAR(500),
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    PhotoLinkProduttore VARCHAR(500),
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella Products
 CREATE TABLE Products (
-    ProductID INT PRIMARY KEY IDENTITY(1,1),
-	BundleID INT ,
+    ProductID INT PRIMARY KEY AUTO_INCREMENT,
+    BundleID INT NULL,
     ProductName VARCHAR(255) NOT NULL,
     Description TEXT,
-	Details TEXT,
-	Raccomandation TEXT,
-    Price decimal ,
-	PhotoLinkProdotto VARCHAR(500),
+    Details TEXT,
+    Raccomandation TEXT,
+    Price DECIMAL(10,2),
+    PhotoLinkProdotto VARCHAR(500),
     ProducerID INT NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_Products_Producers FOREIGN KEY (ProducerID) REFERENCES Producers(ProducerID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella Promotions
 CREATE TABLE Promotions (
-    PromotionID INT PRIMARY KEY IDENTITY(1,1),
+    PromotionID INT PRIMARY KEY AUTO_INCREMENT,
     PromotionName VARCHAR(255) NOT NULL,
     Description TEXT,
-    DiscountPercentage decimal
-	(5,2) NOT NULL,
+    DiscountPercentage DECIMAL(5,2) NOT NULL,
     StartDate DATETIME NOT NULL,
     EndDate DATETIME NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella ProductPromotions (relazione molti-a-molti)
 CREATE TABLE ProductPromotions (
-    ProductPromotionID INT PRIMARY KEY IDENTITY(1,1),
+    ProductPromotionID INT PRIMARY KEY AUTO_INCREMENT,
     ProductID INT NOT NULL,
     PromotionID INT NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_ProductPromotions_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE,
     CONSTRAINT FK_ProductPromotions_Promotions FOREIGN KEY (PromotionID) REFERENCES Promotions(PromotionID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
-	-- Creazione della tabella Orders
-	CREATE TABLE Orders (
-		OrderID INT PRIMARY KEY IDENTITY,
-		UserID INT NOT NULL,
-		SchoolClassID INT NOT NULL,
-		Status NVARCHAR(50) NOT NULL,
-		TotalPrice DECIMAL(10, 2),
-		Created DATETIME DEFAULT GETDATE(),
-		Modified DATETIME NULL,
-		Deleted DATETIME NULL,
-		CONSTRAINT FK_Orders_Users FOREIGN KEY (UserID) REFERENCES Users(UserID),
-		 CONSTRAINT FK_Orders_SchoolClasses FOREIGN KEY (SchoolClassID) REFERENCES SchoolClasses(SchoolClassID) ON DELETE CASCADE
-	);
+-- Creazione della tabella Orders
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    SchoolClassID INT NOT NULL,
+    Status VARCHAR(50) NOT NULL,
+    TotalPrice DECIMAL(10,2),
+    Created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL,
+    CONSTRAINT FK_Orders_Users FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    CONSTRAINT FK_Orders_SchoolClasses FOREIGN KEY (SchoolClassID) REFERENCES SchoolClasses(SchoolClassID) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-
+-- Creazione della tabella OrderDetails
 CREATE TABLE OrderDetails (
-    DetailID INT PRIMARY KEY IDENTITY,
+    DetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
     ProductID INT NOT NULL,
     Quantity INT NOT NULL,
-    UnitPrice DECIMAL(10, 2) NOT NULL,
-    DeliveryDate DATE NOT NULL, -- Data di consegna specifica
-    Recreation NVARCHAR(10) NOT NULL, -- "First" o "Second"
-	ProductCode NVARCHAR(10) NOT NULL,
-    Created DATETIME DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    UnitPrice DECIMAL(10,2) NOT NULL,
+    DeliveryDate DATE NOT NULL,
+    Recreation VARCHAR(10) NOT NULL,
+    ProductCode VARCHAR(10) NOT NULL,
+    Created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_OrderDetails_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     CONSTRAINT FK_OrderDetails_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
-);
-
-
-
-
+) ENGINE=InnoDB;
 
 -- Creazione della tabella OrderTrackings
 CREATE TABLE OrderTrackings (
-    OrderTrackingID INT PRIMARY KEY IDENTITY(1,1),
+    OrderTrackingID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
     Status VARCHAR(50) NOT NULL,
-    LastUpdate DATETIME NOT NULL DEFAULT GETDATE(),
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    LastUpdate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_OrderTrackings_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella Payments
 CREATE TABLE Payments (
-    PaymentID INT PRIMARY KEY IDENTITY(1,1),
+    PaymentID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NULL,
     SubscriptionID INT NULL,
-    Amount decimal(10,2) NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
     PaymentMethod VARCHAR(50) NOT NULL,
     PaymentDate DATETIME NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_Payments_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) ON DELETE SET NULL
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella RefreshTokens
 CREATE TABLE RefreshTokens (
-    Id INT PRIMARY KEY IDENTITY(1,1),
+    Id INT PRIMARY KEY AUTO_INCREMENT,
     UserID INT NOT NULL,
     Token VARCHAR(255) NOT NULL,
     ExpirationDate DATETIME NOT NULL,
-    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
-    IsRevoked BIT NOT NULL DEFAULT 0,
-    Modified DATETIME NULL,
+    CreatedDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    IsRevoked TINYINT(1) NOT NULL DEFAULT 0,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_RefreshTokens_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 -- Creazione della tabella SupportRequests
--- Creazione della tabella SupportRequests
 CREATE TABLE SupportRequests (
-    SupportRequestID INT PRIMARY KEY IDENTITY(1,1),
+    SupportRequestID INT PRIMARY KEY AUTO_INCREMENT,
     UserID INT NOT NULL,
-    OrderID INT NULL, -- Può essere NULL perché non tutte le richieste riguardano ordini
+    OrderID INT NULL,
     Subject VARCHAR(255) NOT NULL,
     Description TEXT NOT NULL,
     Status VARCHAR(50) NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_SupportRequests_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
     CONSTRAINT FK_SupportRequests_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) ON DELETE NO ACTION
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella Categories
 CREATE TABLE Categories (
-    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName NVARCHAR(255) NOT NULL UNIQUE,
-    Description NVARCHAR(500) NULL,
-    Created DATETIME DEFAULT GETUTCDATE(),
-    Modified DATETIME NULL,
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoryName VARCHAR(255) NOT NULL UNIQUE,
+    Description VARCHAR(500) NULL,
+    Created DATETIME DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella CategoryProducts
 CREATE TABLE CategoryProducts (
     ProductID INT NOT NULL,
     CategoryID INT NOT NULL,
-    Created DATETIME DEFAULT GETUTCDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella Inventory
 CREATE TABLE Inventory (
-    ProductID INT PRIMARY KEY, -- Chiave primaria
-    QuantityAvailable INT NOT NULL, -- Scorte disponibili
-    QuantityReserved INT DEFAULT 0, -- Quantità riservata
-    ReorderLevel INT DEFAULT 10, -- Livello di riordino
-    LastUpdated DATETIME NOT NULL DEFAULT GETDATE(), -- Ultima modifica
-    Created DATETIME NOT NULL DEFAULT GETUTCDATE(), -- Data di creazione
-    Modified DATETIME NULL, -- Data di modifica
-    Deleted DATETIME NULL, -- Soft delete
-    CONSTRAINT FK_Inventory_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE -- Relazione con Products
-);
+    ProductID INT PRIMARY KEY,
+    QuantityAvailable INT NOT NULL,
+    QuantityReserved INT DEFAULT 0,
+    ReorderLevel INT DEFAULT 10,
+    LastUpdated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    Created DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL,
+    CONSTRAINT FK_Inventory_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-
--- Tabella InventoryHistory
+-- Creazione della tabella InventoryHistory
 CREATE TABLE InventoryHistory (
-    HistoryID INT PRIMARY KEY IDENTITY(1,1), -- Chiave primaria autonumerata
-    ProductID INT NOT NULL, -- Prodotto a cui si riferisce
-    ChangeAmount INT NOT NULL, -- Quantità aggiunta o rimossa (+ o -)
-    ChangeReason NVARCHAR(255) NOT NULL, -- Motivo del cambiamento ("Order", "Manual Update", etc.)
-    ChangedBy NVARCHAR(100) NOT NULL, -- Utente che ha effettuato il cambiamento
-    Created DATETIME NOT NULL DEFAULT GETUTCDATE(), -- Data di creazione
-    Modified DATETIME NULL, -- Data di modifica
-    Deleted DATETIME NULL, -- Soft delete
-    ChangeDate DATETIME NOT NULL DEFAULT GETDATE(), -- Data della modifica
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE -- Relazione con Products
-);
+    HistoryID INT PRIMARY KEY AUTO_INCREMENT,
+    ProductID INT NOT NULL,
+    ChangeAmount INT NOT NULL,
+    ChangeReason VARCHAR(255) NOT NULL,
+    ChangedBy VARCHAR(100) NOT NULL,
+    Created DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL,
+    ChangeDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Creazione della tabella ShoppingSessions
 CREATE TABLE ShoppingSessions (
-    SessionID INT PRIMARY KEY IDENTITY(1,1), -- ID univoco della sessione
-    UserID INT NULL, -- Collegamento all'utente, NULL se anonimo
-    Status VARCHAR(20) NOT NULL DEFAULT 'Active', -- Es.: Active, Completed, Cancelled
-    TotalAmount decimal(10,2) NOT NULL DEFAULT 0.00, -- Totale della sessione
-    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(), -- Data di creazione
-    UpdatedAt DATETIME NULL, -- Data di aggiornamento
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE SET NULL -- Collegamento alla tabella Users
-);
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NULL,
+    Status VARCHAR(20) NOT NULL DEFAULT 'Active',
+    TotalAmount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Creazione della tabella CartItems
 CREATE TABLE CartItems (
-    CartItemID INT PRIMARY KEY IDENTITY(1,1), -- ID univoco per l'elemento del carrello
-    SessionID INT NOT NULL, -- Collegamento alla sessione
-    ProductID INT NOT NULL, -- Collegamento al prodotto
-    Quantity INT NOT NULL DEFAULT 1, -- Quantità del prodotto
-    Price decimal(10,2) NOT NULL, -- Prezzo unitario del prodotto al momento dell'aggiunta
-    Total decimal(10,2) NOT NULL, -- Totale per questa voce (Price * Quantity)
-	DeliveryDate DATETIME, -- Data di creazione
-	Recreation nVarchar(50),
-    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(), -- Data di creazione
-    UpdatedAt DATETIME NULL, -- Data di aggiornamento
-	DeletedAt DATETIME NULL, -- Data di aggiornamento
-    FOREIGN KEY (SessionID) REFERENCES ShoppingSessions(SessionID) ON DELETE CASCADE, -- Collegamento alla sessione
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE -- Collegamento alla tabella Products
-);
+    CartItemID INT PRIMARY KEY AUTO_INCREMENT,
+    SessionID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL DEFAULT 1,
+    Price DECIMAL(10,2) NOT NULL,
+    Total DECIMAL(10,2) NOT NULL,
+    DeliveryDate DATETIME,
+    Recreation VARCHAR(50),
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    DeletedAt DATETIME NULL,
+    FOREIGN KEY (SessionID) REFERENCES ShoppingSessions(SessionID) ON DELETE CASCADE,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Creazione della tabella ClassDeliveryCodes
 CREATE TABLE ClassDeliveryCodes (
-    ClassDeliveryCodeID INT PRIMARY KEY IDENTITY(1,1),
-    SchoolClassID INT NOT NULL, -- Collegamento alla classe
-    Code1 VARCHAR(10) NOT NULL, -- Codice per la prima ricreazione
-    Code2 VARCHAR(10) NOT NULL, -- Codice per la seconda ricreazione
-    RetrievedCode1 BIT DEFAULT 0, -- Stato di conferma ritiro prima ricreazione
-    RetrievedCode2 BIT DEFAULT 0, -- Stato di conferma ritiro seconda ricreazione
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    ClassDeliveryCodeID INT PRIMARY KEY AUTO_INCREMENT,
+    SchoolClassID INT NOT NULL,
+    Code1 VARCHAR(10) NOT NULL,
+    Code2 VARCHAR(10) NOT NULL,
+    RetrievedCode1 TINYINT(1) DEFAULT 0,
+    RetrievedCode2 TINYINT(1) DEFAULT 0,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_ClassDeliveryCodes_SchoolClasses FOREIGN KEY (SchoolClassID) REFERENCES SchoolClasses(SchoolClassID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella ClassDeliveryLogs
 CREATE TABLE ClassDeliveryLogs (
-    LogID INT PRIMARY KEY IDENTITY(1,1),
-    ClassDeliveryCodeID INT NOT NULL, -- Collegamento ai codici della classe
-    UserID INT NOT NULL, -- `MasterStudent` che ha confermato
-    CodeType VARCHAR(10) NOT NULL, -- "Code1" o "Code2"
-    Timestamp DATETIME NOT NULL DEFAULT GETDATE(),
+    LogID INT PRIMARY KEY AUTO_INCREMENT,
+    ClassDeliveryCodeID INT NOT NULL,
+    UserID INT NOT NULL,
+    CodeType VARCHAR(10) NOT NULL,
+    Timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ClassDeliveryCodeID) REFERENCES ClassDeliveryCodes(ClassDeliveryCodeID) ON DELETE CASCADE,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-);
--- Tabella degli allergeni
-CREATE TABLE Allergens (
-    AllergenID INT PRIMARY KEY IDENTITY(1,1),
-    AllergenName NVARCHAR(255) NOT NULL UNIQUE,
-    Description NVARCHAR(500) NULL,
-    Created DATETIME DEFAULT GETUTCDATE(),
-    Modified DATETIME NULL,
-    Deleted DATETIME NULL
-);
+) ENGINE=InnoDB;
 
--- Relazione molti-a-molti tra prodotti e allergeni
+-- Creazione della tabella Allergens
+CREATE TABLE Allergens (
+    AllergenID INT PRIMARY KEY AUTO_INCREMENT,
+    AllergenName VARCHAR(255) NOT NULL UNIQUE,
+    Description VARCHAR(500) NULL,
+    Created DATETIME DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL
+) ENGINE=InnoDB;
+
+-- Creazione della tabella ProductAllergens
 CREATE TABLE ProductAllergens (
-    ProductAllergenID INT IDENTITY(1,1),
+    ProductAllergenID INT AUTO_INCREMENT,
     ProductID INT NOT NULL,
     AllergenID INT NOT NULL,
-    Created DATETIME DEFAULT GETUTCDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
-    PRIMARY KEY (ProductID, AllergenID),
+    PRIMARY KEY (ProductAllergenID),
+    UNIQUE KEY uniq_Product_Allergen (ProductID, AllergenID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE,
     FOREIGN KEY (AllergenID) REFERENCES Allergens(AllergenID) ON DELETE CASCADE
-);
--- Relazione molti-a-molti tra prodotti e allergeni
+) ENGINE=InnoDB;
+
+-- Creazione della tabella ProducerUsers
 CREATE TABLE ProducerUsers (
     ProducerID INT NOT NULL,
     UserID INT NOT NULL,
-    Created DATETIME DEFAULT GETUTCDATE(),
-    Modified DATETIME NULL,
+    Created DATETIME DEFAULT UTC_TIMESTAMP(),
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     PRIMARY KEY (ProducerID, UserID),
     FOREIGN KEY (ProducerID) REFERENCES Producers(ProducerID) ON DELETE CASCADE,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-);
--- Creazione della tabella Wallet
-CREATE TABLE Wallets (
-    WalletID INT PRIMARY KEY IDENTITY(1,1), -- ID univoco per il portafoglio
-    UserID INT NOT NULL, -- Collegamento all'utente
-    Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00, -- Saldo attuale
-    Created DATETIME NOT NULL DEFAULT GETDATE(), -- Data di creazione
-    Modified DATETIME NULL, -- Data di modifica
-    Deleted DATETIME NULL, -- Soft delete
-    CONSTRAINT FK_Wallets_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE -- Relazione con la tabella Users
-);
+) ENGINE=InnoDB;
 
--- Creazione della tabella WalletTransactions per la cronologia delle transazioni
+-- Creazione della tabella Wallets
+CREATE TABLE Wallets (
+    WalletID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL,
+    CONSTRAINT FK_Wallets_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Creazione della tabella WalletTransactions
 CREATE TABLE WalletTransactions (
-    TransactionID INT PRIMARY KEY IDENTITY(1,1), -- ID univoco per la transazione
-    WalletID INT NOT NULL, -- Collegamento al portafoglio
-    Amount DECIMAL(10,2) NOT NULL, -- Importo della transazione (positivo o negativo)
-    TransactionType VARCHAR(50) NOT NULL, -- Tipo di transazione (es. "Deposit", "Withdraw", "Refund")
-    Description NVARCHAR(255) NULL, -- Descrizione opzionale
-    TransactionDate DATETIME NOT NULL DEFAULT GETDATE(), -- Data della transazione
-    Created DATETIME NOT NULL DEFAULT GETDATE(), -- Data di creazione
-    Modified DATETIME NULL, -- Data di modifica
-    Deleted DATETIME NULL, -- Soft delete
-    CONSTRAINT FK_WalletTransactions_Wallets FOREIGN KEY (WalletID) REFERENCES Wallets(WalletID) ON DELETE CASCADE -- Relazione con Wallet
-);
+    TransactionID INT PRIMARY KEY AUTO_INCREMENT,
+    WalletID INT NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
+    TransactionType VARCHAR(50) NOT NULL,
+    Description VARCHAR(255) NULL,
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    Deleted DATETIME NULL,
+    CONSTRAINT FK_WalletTransactions_Wallets FOREIGN KEY (WalletID) REFERENCES Wallets(WalletID) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Creazione della tabella BundleProducts
 CREATE TABLE BundleProducts (
-    BundleID INT PRIMARY KEY IDENTITY(1,1), -- ID del bundle
-    BundleName NVARCHAR(255) NOT NULL, -- Nome del bundle
-    Description TEXT NULL, -- Descrizione del bundle
-    Price DECIMAL(10,2) NOT NULL, -- Prezzo del bundle
-	Moment NVarchar(50) NOT NULL,
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    BundleID INT PRIMARY KEY AUTO_INCREMENT,
+    BundleName VARCHAR(255) NOT NULL,
+    Description TEXT NULL,
+    Price DECIMAL(10,2) NOT NULL,
+    Moment VARCHAR(50) NOT NULL,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella BundleItems
 CREATE TABLE BundleItems (
-    BundleItemID INT PRIMARY KEY IDENTITY(1,1),
-    BundleID INT , -- Bundle associato
-    ProductID INT NOT NULL, -- Prodotto nel bundle
-    Quantity INT NOT NULL DEFAULT 1, -- Quantità del prodotto nel bundle
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-    Modified DATETIME NULL,
+    BundleItemID INT PRIMARY KEY AUTO_INCREMENT,
+    BundleID INT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL DEFAULT 1,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     Deleted DATETIME NULL,
     CONSTRAINT FK_BundleItems_Bundles FOREIGN KEY (BundleID) REFERENCES BundleProducts(BundleID) ON DELETE CASCADE,
     CONSTRAINT FK_BundleItems_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
+
+-- Creazione della tabella LoggerServer
 CREATE TABLE LoggerServer (
-    ID INT PRIMARY KEY IDENTITY(1,1),
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-	LogType int NOT NULL,--0 = erorre 1 = warning  2= log 
-	LogMessage nvarchar(4000),--messaggio generico
-	StackTrace nvarchar(4000),--errore che da il framwork donet
-	LogSource nvarchar(255),--classe/metodo che ha generato l'errore
-);
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LogType INT NOT NULL,
+    LogMessage VARCHAR(4000),
+    StackTrace VARCHAR(4000),
+    LogSource VARCHAR(255)
+) ENGINE=InnoDB;
+
+-- Creazione della tabella LoggerClient
 CREATE TABLE LoggerClient (
-    ID INT PRIMARY KEY IDENTITY(1,1),
-    Created DATETIME NOT NULL DEFAULT GETDATE(),
-	LogType int NOT NULL,--0 = erorre 1 = warning  2= log 
-	LogMessage nvarchar(4000),--messaggio generico
-	StackTrace nvarchar(4000),--errore che da il framwork donet
-	LogSource nvarchar(255),--classe/metodo che ha generato l'errore
-);
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LogType INT NOT NULL,
+    LogMessage VARCHAR(4000),
+    StackTrace VARCHAR(4000),
+    LogSource VARCHAR(255)
+) ENGINE=InnoDB;
 
 -- Aggiunta di un indice per migliorare le prestazioni delle query sulle transazioni
 CREATE INDEX IDX_WalletTransactions_WalletID ON WalletTransactions (WalletID);
-
 
 INSERT INTO Producers (ProducerName, ContactInfo, Address,PhotoLinkProduttore, Created, Modified, Deleted)
 VALUES
@@ -476,13 +495,8 @@ VALUES
 -- Inserimenti nella tabella Orders con SchoolClassID
 INSERT INTO [Orders] (UserID, SchoolClassID,Status, TotalPrice, Created, Modified, Deleted)
 VALUES
---(4, 2, 'Pending', 25.00, GETDATE(), NULL, NULL), -- Ordine associato alla Classe A
---(2, 2,'Active', 15.80, GETDATE(), NULL, NULL), -- Ordine associato alla Classe B
---(3, 2, 'Active', 30.00, GETDATE(), NULL, NULL), -- Ordine associato alla Classe C--
---(4, 3, 'Pending', 30.00, GETDATE(), NULL, NULL), -- Ordine associato alla Classe C
---(9, 3, 'Active', 30.00, GETDATE(), NULL, NULL), -- Ordine associato alla Classe C
+
 (9, 3, 'Active', 30.00, GETDATE(), NULL, NULL);-- Ordine associato alla Classe C
---(9, 3, 'Active', 30.00, GETDATE(), NULL, NULL); -- Ordine associato alla Classe C
 
 INSERT INTO ProductPromotions (ProductID, PromotionID, Created, Modified, Deleted)
 VALUES
@@ -973,3 +987,4 @@ LEFT JOIN
 WHERE 
     p.ProductID = 1 -- Sostituisci con il ProductID desiderato
     AND p.Deleted IS NULL;
+
