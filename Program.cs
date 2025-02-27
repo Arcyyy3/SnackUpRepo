@@ -1,20 +1,26 @@
 ﻿    using SnackUpAPI.Services;
+using SnackUpAPI.Data;
+
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using SnackUpAPI.Data;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// **Connessione al database**
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddScoped<IDatabaseService, DatabaseService>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    return new DatabaseService(connectionString);
+});
 
 // **Certificato HTTPS**
 var certPath = builder.Configuration["Certificate:Path"];

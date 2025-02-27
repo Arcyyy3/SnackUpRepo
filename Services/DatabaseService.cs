@@ -2,9 +2,10 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 using Dapper;
 using SnackUpAPI.Data;
+using MySql.Data.MySqlClient; // ✅ AGGIUNGI QUESTO
+
 
 namespace SnackUpAPI.Services
 {
@@ -19,7 +20,7 @@ namespace SnackUpAPI.Services
 
         private IDbConnection CreateConnection()
         {
-            return new SqlConnection(_connectionString);
+            return new MySqlConnection(_connectionString); // ✅ USA MySQL Connection invece di SQL Server
         }
 
         public IEnumerable<T> Query<T>(string sql, object? parameters = null)
@@ -56,10 +57,10 @@ namespace SnackUpAPI.Services
 
         public T ExecuteScalar<T>(string query, object? parameters = null)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
-                using (var command = new SqlCommand(query, connection))
+                using (var command = new MySqlCommand(query, connection))
                 {
                     if (parameters != null)
                     {

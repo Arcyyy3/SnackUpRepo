@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.JSInterop;
 using SnackUpAPI.Models;
-using Microsoft.Data.SqlClient; // Per Dapper con Microsoft.Data.SqlClient
-using System.Data.SqlClient; // Per Dapper con System.Data.SqlClient
 using SnackUpAPI.Data;
+using MySql.Data.MySqlClient; // ✅ AGGIUNGI QUESTO
 
 namespace SnackUpAPI.Services
 {
