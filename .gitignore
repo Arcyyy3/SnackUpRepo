@@ -1,16 +1,34 @@
-# Cartelle di compilazione temporanee
+# Ignora tutto dentro bin/ e obj/
 bin/
 obj/
 
-# Escludi la cartella Debug, ma non Release
-bin\Debug/
+# Mantieni solo i file necessari nella cartella Release/net8.0
+!bin/Release/
+!bin/Release/net8.0/
+!bin/Release/net8.0/*.exe
+!bin/Release/net8.0/*.dll
+!bin/Release/net8.0/*.json
+!bin/Release/net8.0/*.deps.json
+!bin/Release/net8.0/*.runtimeconfig.json
 
-# Escludi tutto il contenuto di bin, ma mantieni la cartella di Release pubblicata
-bin\Release/
-!bin\Release/**/*.exe
-!bin\Release/**/*.dll 
-!bin\Release/**/*.json
-!bin\Release/**/*.config
+# Ignora le cartelle di localizzazione e runtime
+bin/Release/net8.0/cs/
+bin/Release/net8.0/de/
+bin/Release/net8.0/es/
+bin/Release/net8.0/fr/
+bin/Release/net8.0/it/
+bin/Release/net8.0/ja/
+bin/Release/net8.0/ko/
+bin/Release/net8.0/pl/
+bin/Release/net8.0/pt-BR/
+bin/Release/net8.0/ru/
+bin/Release/net8.0/tr/
+bin/Release/net8.0/zh-Hans/
+bin/Release/net8.0/zh-Hant/
+bin/Release/net8.0/runtimes/
+
+# Ignora la cartella runtimes se non serve per la distribuzione
+bin/Release/net8.0/runtimes/
 
 # Escludi i file di Visual Studio
 .vs/
