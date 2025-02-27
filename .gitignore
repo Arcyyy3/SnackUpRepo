@@ -4,7 +4,7 @@ obj/
 
 # Mantieni solo i file necessari nella cartella Release/net8.0
 !bin/Release/
-!bin/Release/net8.0/
+!bin/Release/net8.0/ 
 !bin/Release/net8.0/*.exe
 !bin/Release/net8.0/*.dll
 !bin/Release/net8.0/*.json
