@@ -8,7 +8,7 @@ bin\Debug/
 # Escludi tutto il contenuto di bin, ma mantieni la cartella di Release pubblicata
 bin\Release/
 !bin\Release/**/*.exe
-!bin\Release/**/*.dll
+!bin\Release/**/*.dll 
 !bin\Release/**/*.json
 !bin\Release/**/*.config
 
