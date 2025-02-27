@@ -10,6 +10,8 @@ obj/
 !bin/Release/net8.0/*.json
 !bin/Release/net8.0/*.deps.json
 !bin/Release/net8.0/*.runtimeconfig.json
+!bin/Release/net8.0/.gitkeep
+
 
 # Ignora le cartelle di localizzazione e runtime
 bin/Release/net8.0/cs/
