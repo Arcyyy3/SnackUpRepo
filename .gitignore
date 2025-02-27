@@ -1,8 +1,18 @@
-# Cartelle generiche
+# Cartelle di compilazione temporanee
 bin/
 obj/
 
-# Cartella dei file di Visual Studio
+# Escludi la cartella Debug, ma non Release
+bin\Debug/
+
+# Escludi tutto il contenuto di bin, ma mantieni la cartella di Release pubblicata
+bin\Release/
+!bin\Release/**/*.exe
+!bin\Release/**/*.dll
+!bin\Release/**/*.json
+!bin\Release/**/*.config
+
+# Escludi i file di Visual Studio
 .vs/
 
 # File di log
